@@ -19,7 +19,7 @@ return json(data);
 }
 
 export default function Dashboard() {
-    const data = useLoaderData<typeof loader>();
+    const {data} = useLoaderData<typeof loader>();
     return (
         <div className=" my-16 w-full h-full max-w-[1500px] mx-auto mr-5 bg-white">
             <div className="flex justify-between  items-center ">

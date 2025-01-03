@@ -1,23 +1,27 @@
+import { supabase } from "supabase.server";
+
 export const fetchProducts = async () => {
-  const response = await fetch("http://localhost:3001/products");
-  const products = await response.json();
-  return products;
+  let { data, error } = await supabase.from("ProductsDetail").select("*");
+  return { data, error };
 };
+
 export const fetchProductById = async (id: string) => {
-  const response = await fetch(`http://localhost:3001/products/${id}`);
-  return await response.json();
+  const { data, error } = await supabase
+    .from("ProductsDetail")
+    .select("*")
+    .eq("id", id);
+  return { data, error };
 };
 
 export const updateProduct = async (id: unknown, updatedData: unknown) => {
-  await fetch(`http://localhost:3001/products/${id}`, {
-    method: "PATCH",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(updatedData),
-  });
+  const { data, error } = await supabase
+    .from("ProductsDetail")
+    .update(updatedData)
+    .eq("id", id);
+  return { data, error };
 };
 
 export const deleteProduct = async (id: unknown) => {
-  await fetch(`http://localhost:3001/products/${id}`, {
-    method: "DELETE",
-  });
+  const { error } = await supabase.from("ProductsDetail").delete().eq("id", id);
+  return error;
 };
