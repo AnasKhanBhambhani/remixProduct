@@ -67,32 +67,10 @@ export const action: ActionFunction = async ({ request }: ActionFunctionArgs) =>
         console.error("Error in action function:", insertError);
         return json({ error: insertError || "Unknown error" }, { status: 500 });
     }
-
-    //     const response = await fetch("http://localhost:3001/products", {
-    //         method: "POST",
-    //         headers: {
-    //             "Content-Type": "application/json",
-    //         },
-    //         body: JSON.stringify({ ...validatedData, ProductImage}),
-    //     });
-    //     if (!response.ok) {
-    //         throw new Error("Failed to post data");
-    //     }
-    //     return redirect('/dashboard/products');
-    // } catch (error) {
-    //     if (error instanceof z.ZodError) {
-    //         const validationErrors = error.format();
-    //         return { errors: validationErrors };
-    //     }
-    //     throw error;
 };
 
 export default function Product() {
     const result = useActionData<actionData>();
-    console.log('====================================');
-    console.log(result, 'suparesult');
-    console.log('====================================');
-    // const { v4: uuidv4 } = require('uuid');
     return (
         <div className="my-16 w-full h-full max-w-[1500px] gap-5 mx-auto mr-5 flex flex-col justify-center">
             <div className="flex justify-center">

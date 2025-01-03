@@ -5,7 +5,13 @@ export type Products = {
   price: string;
   ProductImage: string;
 };
+
 export type Data = {
   data: Products[];
   error: string;
+};
+export type UpdatedProduct = {
+  name: string;
+  description: string;
+  price: number;
 };

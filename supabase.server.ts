@@ -1,6 +1,10 @@
-import { createClient } from '@supabase/supabase-js';
+import invariant from "tiny-invariant";
+import { createClient } from "@supabase/supabase-js";
 
-const SUPABASE_URL = process.env.SUPABASE_URL!;
-const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY!;
+invariant(process.env.SUPABASE_URL, "Missing SUPABASE_URL");
+invariant(process.env.SUPABASE_ANON_KEY, "Missing SUPABASE_ANON_KEY");
 
-export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+export const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_ANON_KEY
+);

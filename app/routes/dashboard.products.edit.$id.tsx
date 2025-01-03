@@ -14,8 +14,9 @@ import { Label } from "~/components/ui/label";
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
 import { useState } from "react";
-import { fetchProductById, updateProduct } from "~/Apis/product";
+import { fetchProductById, updateProduct } from "~/apis/product";
 import { Data, Products } from "~/types/product";
+import { productSchema } from "~/Validations/productValidation";
 
 export const meta: MetaFunction = () => {
     return [
@@ -31,19 +32,16 @@ export const loader: LoaderFunction = async ({ params }) => {
 }
 
 export const action: ActionFunction = async ({ params, request }) => {
+    invariant(params.id, 'Missing Params Id')
     const formData = await request.formData();
-    const updateData = {
-        name: formData.get('name'),
-        description: formData.get('description'),
-        price: formData.get('price'),
-    }
-    const id = params.id;
-  await updateProduct(id, updateData)
+    const UpdatedData = Object.fromEntries(formData)
+    const validatedData = productSchema.parse(UpdatedData)
+    await updateProduct(params.id, validatedData)
     return redirect('/dashboard');
 }
 
 export default function Product() {
-    const {data, error}: Data = useLoaderData();
+    const { data, error }: Data = useLoaderData();
     const navigate = useNavigate()
     const [toggle, setToggle] = useState(true)
     const handleClose = () => {
@@ -58,49 +56,49 @@ export default function Product() {
                         Make changes to your profile here. Click save when you are done.
                     </DialogDescription>
                 </DialogHeader>
-               {error ? <h1>There is an error while fetching Data...</h1> : 
-             <Form method="post">
-                    <div className="grid gap-4 py-4">
-                        <div className="grid grid-cols-4 items-center gap-4">
-                            <Label htmlFor="name" className="text-right">
-                                Name
-                            </Label>
-                            <Input
-                                id="name"
-                                name="name"
-                                defaultValue={data[0]?.name || ''}
-                                className="col-span-3"
-                            />
-                        </div>
-                        <div className="grid grid-cols-4 items-center gap-4">
-                            <Label htmlFor="username" className="text-right">
-                                Description
-                            </Label>
-                            <Input
-                                id="description"
-                                name="description"
-                                defaultValue={data[0]?.description || ''}
+                {error ? <h1>There is an error while fetching Data...</h1> :
+                    <Form method="post">
+                        <div className="grid gap-4 py-4">
+                            <div className="grid grid-cols-4 items-center gap-4">
+                                <Label htmlFor="name" className="text-right">
+                                    Name
+                                </Label>
+                                <Input
+                                    id="name"
+                                    name="name"
+                                    defaultValue={data[0]?.name || ''}
+                                    className="col-span-3"
+                                />
+                            </div>
+                            <div className="grid grid-cols-4 items-center gap-4">
+                                <Label htmlFor="username" className="text-right">
+                                    Description
+                                </Label>
+                                <Input
+                                    id="description"
+                                    name="description"
+                                    defaultValue={data[0]?.description || ''}
 
-                                className="col-span-3"
-                            />
+                                    className="col-span-3"
+                                />
+                            </div>
+                            <div className="grid grid-cols-4 items-center gap-4">
+                                <Label htmlFor="username" className="text-right">
+                                    Price
+                                </Label>
+                                <Input
+                                    id="price"
+                                    name="price"
+                                    defaultValue={data[0]?.price || ''}
+                                    className="col-span-3"
+                                />
+                            </div>
                         </div>
-                        <div className="grid grid-cols-4 items-center gap-4">
-                            <Label htmlFor="username" className="text-right">
-                                Price
-                            </Label>
-                            <Input
-                                id="price"
-                                name="price"
-                                defaultValue={data[0]?.price || ''}
-                                className="col-span-3"
-                            />
-                        </div>
-                    </div>
-                    <DialogFooter>
-                        <Button type="submit">Save changes</Button>
-                    </DialogFooter>
-                </Form> 
-               }
+                        <DialogFooter>
+                            <Button type="submit">Save changes</Button>
+                        </DialogFooter>
+                    </Form>
+                }
             </DialogContent>
         </Dialog>
     );

@@ -5,7 +5,7 @@ import { Button } from "./button"
 import { Card, CardContent } from "./card"
 import { Input } from "./input"
 import { Label } from "./label"
-import myproduct from '../../assets/products-and-services-1024x1024.webp'
+import myproduct from '../../../public/assets/products-and-services-1024x1024.webp'
 import { Form } from "@remix-run/react"
 
 

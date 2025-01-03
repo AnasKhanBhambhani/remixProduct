@@ -1,4 +1,5 @@
 import { supabase } from "supabase.server";
+import { Data, Products, UpdatedProduct } from "~/types/product";
 
 export const fetchProducts = async () => {
   let { data, error } = await supabase.from("ProductsDetail").select("*");
@@ -13,7 +14,7 @@ export const fetchProductById = async (id: string) => {
   return { data, error };
 };
 
-export const updateProduct = async (id: unknown, updatedData: unknown) => {
+export const updateProduct = async (id: string, updatedData: UpdatedProduct) => {
   const { data, error } = await supabase
     .from("ProductsDetail")
     .update(updatedData)
@@ -21,7 +22,7 @@ export const updateProduct = async (id: unknown, updatedData: unknown) => {
   return { data, error };
 };
 
-export const deleteProduct = async (id: unknown) => {
+export const deleteProduct = async (id: string | null) => {
   const { error } = await supabase.from("ProductsDetail").delete().eq("id", id);
   return error;
 };

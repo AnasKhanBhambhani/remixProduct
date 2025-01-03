@@ -49,11 +49,9 @@ export function AppSidebar({ status }: AppSidebarProps) {
             });
             if (response.ok) {
                 navigate('/login');
-            } else {
-                console.error('Failed to log out');
             }
         } catch (error) {
-            console.error('Error during logout:', error);
+            return error
         }
     }
     return (
