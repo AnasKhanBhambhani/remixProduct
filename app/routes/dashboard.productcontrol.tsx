@@ -30,9 +30,6 @@ export const action: ActionFunction = async ({ request }: ActionFunctionArgs) =>
     if (!file || typeof file === "string") {
         return json({ error: "File upload failed" }, { status: 400 });
     }
-
-  
-
     try {
         const img = file as File;
         const fileBuffer = await img.arrayBuffer();
@@ -43,28 +40,25 @@ export const action: ActionFunction = async ({ request }: ActionFunctionArgs) =>
                 contentType: file.type,
                 upsert: false,
             });
-    
+
         if (uploadError) {
             throw new Error(`File upload failed: ${uploadError.message}`);
         }
-    
+
         const { data: fileName } = await supabase.storage
             .from('ProductImages')
             .getPublicUrl(fileUpload);
         const ProductImage = await fileName.publicUrl;
         const validatedData = productSchema.parse({ name, description, price: parseInt(price as string) })
-        const { data, error:insertError } = await supabase
+        const { data, error: insertError } = await supabase
             .from('ProductsDetail')
             .insert([{ ...validatedData, ProductImage }]);
 
         if (insertError) {
-            console.error("Supabase Insertion Error:", insertError);
             throw new Error("Failed to post data");
         }
-
         return redirect("/dashboard/products");
     } catch (insertError) {
-        console.error("Error in action function:", insertError);
         return json({ error: insertError || "Unknown error" }, { status: 500 });
     }
 };

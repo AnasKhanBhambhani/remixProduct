@@ -7,6 +7,7 @@ import { Button } from "../components/ui/button";
 import { requireUserSession } from "~/session.server";
 import { Input } from "~/components/ui/input";
 import { z } from "zod";
+import { createSupabaseServerClient } from "supabase.server";
 
 export const meta: MetaFunction = () => {
     return [
@@ -16,7 +17,17 @@ export const meta: MetaFunction = () => {
 };
 
 export const loader: LoaderFunction = async ({ request }) => {
-    const logStatus = await requireUserSession(request);
+    // return redirect(`/login?next=${encodeURIComponent(next)}`);
+    const { supabaseClient } = createSupabaseServerClient(request)
+    const {
+        data: { user },
+    } = await supabaseClient.auth.getUser()
+    let logStatus = 'user';
+
+    if (user?.id === '15122c6e-d27f-4892-8234-e2a7cff81f5c') {
+        logStatus = 'admin';
+    }
+
     const data = await fetchProducts();
     const newData = {
         ...data,
@@ -46,7 +57,7 @@ export default function Product() {
             <div className="grid grid-cols-2  justify-center items-center px-10">
                 <h1 className=" text-3xl my-10 ">Your Products</h1>
                 <div className=" text-end">
-                    <Button onClick={() => navigate('/dashboard/productcontrol')}>Add products</Button>
+                    {data?.status == 'admin' && <Button onClick={() => navigate('/dashboard/productcontrol')}>Add products</Button>}
                 </div>
             </div>
             <div className="flex flex-wrap  p-1 gap-7 justify-center">

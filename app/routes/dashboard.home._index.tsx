@@ -5,7 +5,7 @@ import { Card } from "../components/ui/card";
 import { AppWindowMac, CircleDollarSign, Weight } from "lucide-react"
 import { ProfitChart } from "../components/ProfitChart";
 import { fetchProducts } from "~/apis/product";
-import { useLoaderData } from "@remix-run/react";
+import { useLoaderData, useOutletContext } from "@remix-run/react";
 
 export const meta: MetaFunction = () => {
     return [
@@ -19,6 +19,7 @@ export const loader: LoaderFunction = async () => {
 }
 
 export default function Dashboard() {
+    const user:String = useOutletContext();
     const { data } = useLoaderData<typeof loader>();
     return (
         <div className=" my-16 w-full h-full max-w-[1500px] mx-auto mr-5 bg-white">
@@ -28,7 +29,7 @@ export default function Dashboard() {
                     <Button type="submit">Search</Button>
                 </div>
                 <div>
-                    <h1 className="text-3xl">Product Management System</h1>
+                    <h1 className="text-3xl">Welcome {user ?? user}</h1>
                 </div>
             </div>
             <div className=" flex gap-10 my-10  justify-between">

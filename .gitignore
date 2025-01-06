@@ -1,5 +1,3 @@
-# Environment files
 .env
 
-# Node modules
 node_modules/

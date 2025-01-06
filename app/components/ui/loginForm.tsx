@@ -6,13 +6,16 @@ import { Card, CardContent } from "./card"
 import { Input } from "./input"
 import { Label } from "./label"
 import myproduct from '../../../public/assets/products-and-services-1024x1024.webp'
-import { Form } from "@remix-run/react"
+import { Form, Link } from "@remix-run/react"
+import { Props } from "~/types"
+
 
 
 export function LoginForm({
   className,
+  message,
   ...props
-}: React.ComponentProps<"div">) {
+}: Props & React.ComponentProps<"div">) {
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="overflow-hidden">
@@ -34,12 +37,14 @@ export function LoginForm({
                   placeholder="m@example.com"
                   required
                 />
+                <div className="text-red-500 my-2 text-xs"> {message?.errors?.email || ''}</div>
               </div>
               <div className="grid gap-2">
                 <div className="flex items-center">
                   <Label htmlFor="password">Password</Label>
                 </div>
                 <Input id="password" name="password" type="password" required />
+                <div className="text-red-500 my-2 text-xs"> {message?.errors?.password || ''}</div>
               </div>
               <Button type="submit" className="w-full">
                 Login
@@ -48,9 +53,9 @@ export function LoginForm({
 
               <div className="text-center text-sm">
                 Don&apos;t have an account?{" "}
-                <a href="/" className="underline underline-offset-4">
+                <Link to="/signup" className="underline underline-offset-4">
                   Sign up
-                </a>
+                </Link>
               </div>
             </div>
           </Form>

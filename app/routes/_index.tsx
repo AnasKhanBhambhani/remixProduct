@@ -1,7 +1,6 @@
 import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import { redirect } from "@remix-run/react";
-import Dashboard from "./dashboard";
-import { requireUserSession } from "~/session.server";
+import { createSupabaseServerClient } from "supabase.server";
 export const meta: MetaFunction = () => {
   return [
     { title: "New Remix App" },
@@ -9,9 +8,13 @@ export const meta: MetaFunction = () => {
   ];
 };
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const isLogin = await requireUserSession(request);
-  if (isLogin) {
-    return redirect('dashboard/home')
+  const { supabaseClient } = createSupabaseServerClient(request)
+  const {
+    data: { user },
+  } = await supabaseClient.auth.getUser()
+  if (!user) {
+    return redirect('/login')
   }
-  return redirect('/login')
+  return redirect('dashboard/home')
+
 }

@@ -2,7 +2,10 @@ import { supabase } from "supabase.server";
 import { Data, Products, UpdatedProduct } from "~/types/product";
 
 export const fetchProducts = async () => {
-  let { data, error } = await supabase.from("ProductsDetail").select("*");
+  let { data, error } = await supabase
+    .from("ProductsDetail")
+    .select("*")
+    .order("id", { ascending: true });
   return { data, error };
 };
 
@@ -14,7 +17,10 @@ export const fetchProductById = async (id: string) => {
   return { data, error };
 };
 
-export const updateProduct = async (id: string, updatedData: UpdatedProduct) => {
+export const updateProduct = async (
+  id: string,
+  updatedData: UpdatedProduct
+) => {
   const { data, error } = await supabase
     .from("ProductsDetail")
     .update(updatedData)
