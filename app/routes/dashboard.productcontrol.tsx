@@ -30,55 +30,41 @@ export const action: ActionFunction = async ({ request }: ActionFunctionArgs) =>
     if (!file || typeof file === "string") {
         return json({ error: "File upload failed" }, { status: 400 });
     }
-
-    const img = file as File;
-    if (!img) {
-        return { error: 'Image file is required' };
-    }
-    const fileBuffer = await img.arrayBuffer();
-    const fileUpload = `${Date.now()}-${img.name}`
-    const { error } = await supabase.storage
-        .from('ProductImages')
-        .upload(fileUpload, new Uint8Array(fileBuffer), {
-            contentType: file.type,
-            upsert: false,
-        });
-
-    if (error) {
-        console.error(error, 'dddd');
-        return { error: error.message };
-    }
-
-    const { data: fileName } = await supabase.storage
-        .from('ProductImages')
-        .getPublicUrl(fileUpload);
-    const ProductImage = fileName.publicUrl;
-  
     try {
-        const validatedData = productSchema.parse({ name, description, price })
-        const response = await fetch("http://localhost:3001/products", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ ...validatedData, ProductImage}),
-        });
-        if (!response.ok) {
+        const img = file as File;
+        const fileBuffer = await img.arrayBuffer();
+        const fileUpload = `${Date.now()}-${img.name}`
+        const { error: uploadError } = await supabase.storage
+            .from('ProductImages')
+            .upload(fileUpload, new Uint8Array(fileBuffer), {
+                contentType: file.type,
+                upsert: false,
+            });
+
+        if (uploadError) {
+            throw new Error(`File upload failed: ${uploadError.message}`);
+        }
+
+        const { data: fileName } = await supabase.storage
+            .from('ProductImages')
+            .getPublicUrl(fileUpload);
+        const ProductImage = await fileName.publicUrl;
+        const validatedData = productSchema.parse({ name, description, price: parseInt(price as string) })
+        const { data, error: insertError } = await supabase
+            .from('ProductsDetail')
+            .insert([{ ...validatedData, ProductImage }]);
+
+        if (insertError) {
             throw new Error("Failed to post data");
         }
-        return redirect('/dashboard/products');
-    } catch (error) {
-        if (error instanceof z.ZodError) {
-            const validationErrors = error.format();
-            return { errors: validationErrors };
-        }
-        throw error;
+        return redirect("/dashboard/products");
+    } catch (insertError) {
+        return json({ error: insertError || "Unknown error" }, { status: 500 });
     }
 };
 
 export default function Product() {
     const result = useActionData<actionData>();
-    // const { v4: uuidv4 } = require('uuid');
     return (
         <div className="my-16 w-full h-full max-w-[1500px] gap-5 mx-auto mr-5 flex flex-col justify-center">
             <div className="flex justify-center">
