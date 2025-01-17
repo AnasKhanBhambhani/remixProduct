@@ -28,6 +28,7 @@ export const loader: LoaderFunction = async ({ request }) => {
         logStatus = 'admin';
     }
 
+    // 
     const data = await fetchProducts();
     const newData = {
         ...data,
