@@ -1,48 +1,47 @@
 import { redirect, useActionData } from "@remix-run/react";
-import { ActionFunction, ActionFunctionArgs } from '@remix-run/node'
-
+import { ActionFunction, ActionFunctionArgs, json } from '@remix-run/node'
 import { LoginForm } from "../components/ui/loginForm"
-import { commitSession, getSession } from "../session.server";
+import { createSupabaseServerClient } from "supabase.server";
+import { object, z } from "zod";
+import { authSchema } from "~/Validations/AuthValidation";
+
+
 
 export const action: ActionFunction = async ({ request }: ActionFunctionArgs) => {
+    const url = new URL(request.url);
+    const { supabaseClient, headers } = createSupabaseServerClient(request)
     const formData = await request.formData();
-    const email = formData.get('email');
-    const password = formData.get('password');
-    const admin = {
-        email: 'anashamza457@gmail.com',
-        password: '12345',
-    }
-    const user = {
-        email: 'anas@gmail.com',
-        password: '12345',
-    }
-    if (admin.email === email && admin.password === password) {
-        const session = await getSession();
-        session.set('status', 'admin');
-        return redirect("/dashboard/home", {
-            headers: { "Set-Cookie": await commitSession(session) },
+    const authData = Object.fromEntries(formData)
+    try {
+       const validatedData =  authSchema.parse(authData)
+        const { data, error } = await supabaseClient.auth.signInWithPassword(validatedData);
+        if (error) {
+            return error.code
+        }
+        return redirect(url.searchParams.get('next') || '/', {
+            headers,
         });
+    } catch (err) {
+        if (err instanceof z.ZodError) {
+            const errors = err.flatten().fieldErrors;
+            return json({ success: false, errors }, { status: 400 });
+        }
+        throw err;
     }
-    else if(user.email === email && user.password === password){
-        const session = await getSession();
-        session.set('status', 'user');
-        return redirect("/dashboard/home", {
-            headers: { "Set-Cookie": await commitSession(session) },
-        });
-    } else {
-        return { error: "Invalid credentials" };
-    }
+ 
+
 }
 
 
 export default function LoginPage() {
     const actionData = useActionData<typeof action>();
     return (
-        <div className="w-full flex min-h-svh flex-col items-center justify-center bg-muted p-6 md:p-10">
-            <div className="text-red-500 my-2">{actionData?.error}</div>
+        <div className="bg-gradient-to-r from-indigo-500 from-10% via-sky-500 via-30% to-emerald-500 to-90% w-full flex min-h-svh flex-col  items-center justify-center bg-muted p-6 md:p-10">
             <div className="w-full max-w-sm md:max-w-3xl">
-                <LoginForm />
+                <LoginForm message={actionData ?? actionData?.errors} />
             </div>
         </div>
+
     )
+
 }

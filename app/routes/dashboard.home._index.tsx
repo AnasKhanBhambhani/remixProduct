@@ -4,8 +4,8 @@ import { Button } from "../components/ui/button";
 import { Card } from "../components/ui/card";
 import { AppWindowMac, CircleDollarSign, Weight } from "lucide-react"
 import { ProfitChart } from "../components/ProfitChart";
-import { fetchProducts } from "~/Apis/product";
-import { useLoaderData } from "@remix-run/react";
+import { fetchProducts } from "~/apis/product";
+import { useLoaderData, useOutletContext } from "@remix-run/react";
 
 export const meta: MetaFunction = () => {
     return [
@@ -13,13 +13,14 @@ export const meta: MetaFunction = () => {
         { name: "description", content: "Welcome to Remix!" },
     ];
 };
-export const loader:LoaderFunction = async()=>{
-const data = await fetchProducts();
-return json(data);
+export const loader: LoaderFunction = async () => {
+    const data = await fetchProducts();
+    return json(data);
 }
 
 export default function Dashboard() {
-    const data = useLoaderData<typeof loader>();
+    const user:String = useOutletContext();
+    const { data } = useLoaderData<typeof loader>();
     return (
         <div className=" my-16 w-full h-full max-w-[1500px] mx-auto mr-5 bg-white">
             <div className="flex justify-between  items-center ">
@@ -28,7 +29,7 @@ export default function Dashboard() {
                     <Button type="submit">Search</Button>
                 </div>
                 <div>
-                    <h1 className="text-3xl">Product Management System</h1>
+                    <h1 className="text-3xl">Welcome {user ?? user}</h1>
                 </div>
             </div>
             <div className=" flex gap-10 my-10  justify-between">
@@ -52,7 +53,7 @@ export default function Dashboard() {
                 </Card>
                 <Card className="flex p-12 gap-3  w-72">
                     <div className=" flex items-center">
-                    <CircleDollarSign className="size-10 text-black" />
+                        <CircleDollarSign className="size-10 text-black" />
                     </div>
                     <div className="flex flex-col">
                         <p>Total Profit</p>
@@ -61,18 +62,18 @@ export default function Dashboard() {
                 </Card>
                 <Card className="flex p-12 gap-3  w-72">
                     <div className=" flex items-center">
-                    <CircleDollarSign className="size-10 text-black" />
+                        <CircleDollarSign className="size-10 text-black" />
                     </div>
                     <div className="flex flex-col">
                         <p>Categories</p>
                         <h1 className="text-3xl">10</h1>
                     </div>
                 </Card>
-              
+
             </div>
             <div className="">
-                <ProfitChart/>
-               </div>
+                <ProfitChart />
+            </div>
         </div>
     );
 }
