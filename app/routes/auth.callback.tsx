@@ -7,13 +7,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
     const code = requestUrl.searchParams.get('code')
     const next = requestUrl.searchParams.get('next') || '/'
     const headers = new Headers()
-    console.log('====================================');
-    console.log(code);
-    console.log('====================================');
+
     if (code) {
-        console.log('====================================');
-        console.log(code, 'code ');
-        console.log('====================================');
+
         const supabase = createServerClient(process.env.SUPABASE_URL!, process.env.SUPABASE_ANON_KEY!, {
             cookies: {
                 getAll() {
