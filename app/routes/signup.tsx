@@ -1,10 +1,10 @@
 import { redirect, useActionData } from "@remix-run/react";
-import { ActionFunction, ActionFunctionArgs, json } from '@remix-run/node'
-import { LoginForm } from "../components/ui/loginForm"
-import { createSupabaseServerClient, supabase } from "supabase.server";
-import { object, z } from "zod";
+import { ActionFunction, ActionFunctionArgs, json, LoaderFunction, LoaderFunctionArgs } from '@remix-run/node'
+import { createSupabaseServerClient } from "supabase.server";
+import { z } from "zod";
 import { authSchema } from "~/Validations/AuthValidation";
-import AuthForm from "~/components/Loginform";
+import Authenticated_signupform from "~/components/signupForm";
+import { signUpSchema } from "~/Validations/signupValidation";
 
 
 
@@ -13,12 +13,24 @@ export const action: ActionFunction = async ({ request }: ActionFunctionArgs) =>
     const { supabaseClient, headers } = createSupabaseServerClient(request)
     const formData = await request.formData();
     const authData = Object.fromEntries(formData)
+
     try {
-        const validatedData = authSchema.parse(authData)
-        const { data, error } = await supabaseClient.auth.signInWithPassword(validatedData);
+        const { name, email, password } = signUpSchema.parse(authData)
+        const { data, error } = await supabaseClient.auth.signUp({
+            email,
+            password,
+            options: {
+                data: {
+                    name,
+                    is_approved: true
+                },
+            },
+        })
         if (error) {
+            console.log(error);
             return Response.json(error.code, { status: 400 })
         }
+
 
         return redirect(url.searchParams.get('next') || '/', {
             headers,
@@ -39,8 +51,10 @@ export default function LoginPage() {
     return (
         <div className="bg-gradient-to-r from-indigo-500 from-10% via-sky-500 via-30% to-emerald-500 to-90% w-full flex min-h-svh flex-col  items-center justify-center bg-muted p-6 md:p-10">
             <div className="w-full max-w-sm md:max-w-3xl">
-                {<AuthForm message={actionData ?? actionData?.errors} />}
+                {<Authenticated_signupform message={actionData ?? actionData?.errors} />}
             </div>
         </div>
+
     )
+
 }

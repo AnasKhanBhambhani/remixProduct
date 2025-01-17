@@ -1,10 +1,12 @@
-import type { ActionFunction, ActionFunctionArgs, MetaFunction } from "@remix-run/node";
+import type { ActionFunction, ActionFunctionArgs, LoaderFunction, MetaFunction } from "@remix-run/node";
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
-import { Form, json, redirect, useActionData } from "@remix-run/react";
+import { Form, json, redirect, useActionData, useLoaderData } from "@remix-run/react";
 import { productSchema } from "~/Validations/productValidation";
 import { z } from "zod";
 import { supabase } from "supabase.server";
+import { ComboboxDemo } from "~/components/combobox";
+import { fetchCategoriesName } from "~/apis/categories";
 interface actionData {
     errors?: {
         name?: { _errors: string[] };
@@ -20,6 +22,11 @@ export const meta: MetaFunction = () => {
         { name: "description", content: "Welcome to Remix!" },
     ];
 };
+
+export const loader: LoaderFunction = async ({ request }: ActionFunctionArgs) => {
+    const data = await fetchCategoriesName();
+    return data;
+}
 
 export const action: ActionFunction = async ({ request }: ActionFunctionArgs) => {
     const formData = await request.formData();
@@ -65,13 +72,17 @@ export const action: ActionFunction = async ({ request }: ActionFunctionArgs) =>
 
 export default function Product() {
     const result = useActionData<actionData>();
+    const data = useLoaderData();
+    console.log('====================================');
+    console.log(data);
+    console.log('====================================');
     return (
         <div className="my-16 w-full h-full max-w-[1500px] gap-5 mx-auto mr-5 flex flex-col justify-center">
             <div className="flex justify-center">
                 <h1 className="text-2xl">Product Control</h1>
             </div>
             <Form className="flex justify-center" method="post" encType="multipart/form-data">
-                <div className="flex gap-10 w-[50%] flex-col bg-slate-100 rounded-lg p-32">
+                <div className="grid grid-cols-1 gap-10 bg-slate-100 rounded-lg p-32">
                     <Input type="text" name="name" id="name" placeholder="Enter Product Name" />
                     {result?.errors?.name && (
                         <p className="text-red-500 text-xs">
@@ -96,6 +107,7 @@ export default function Product() {
                             {result.errors.fileName._errors[0]}
                         </p>
                     )}
+                    <ComboboxDemo />
 
                     <Button type="submit">Add Product</Button>
                 </div>

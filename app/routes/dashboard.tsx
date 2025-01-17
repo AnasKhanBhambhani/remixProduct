@@ -21,12 +21,8 @@ export const loader: LoaderFunction = async ({ request }) => {
     if (!user) {
         return redirect(`/login?next=${url.pathname}`)
     }
-    let logStatus = 'user';
-    if (user.id === '15122c6e-d27f-4892-8234-e2a7cff81f5c') {
-        logStatus = 'admin';
-        return json({ status: logStatus, user });
-    }
-    return json({ status: 'admin', user });
+    
+        return json({ user });
 
 };
 
@@ -34,7 +30,7 @@ export default function Dashboard() {
     const { status, user } = useLoaderData<typeof loader>();
     return (
         <SidebarProvider>
-            <AppSidebar status={status} />
+            <AppSidebar  />
             <main>
                 <SidebarTrigger />
             </main>

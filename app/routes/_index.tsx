@@ -11,8 +11,11 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { supabaseClient } = createSupabaseServerClient(request)
   const {
     data: { user },
+    error,
   } = await supabaseClient.auth.getUser()
+
   if (!user) {
+
     return redirect('/login')
   }
   return redirect('dashboard/home')

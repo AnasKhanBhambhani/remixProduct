@@ -17,21 +17,13 @@ export const meta: MetaFunction = () => {
 };
 
 export const loader: LoaderFunction = async ({ request }) => {
-    // return redirect(`/login?next=${encodeURIComponent(next)}`);
     const { supabaseClient } = createSupabaseServerClient(request)
     const {
         data: { user },
     } = await supabaseClient.auth.getUser()
-    let logStatus = 'user';
-
-    if (user?.id === '15122c6e-d27f-4892-8234-e2a7cff81f5c') {
-        logStatus = 'admin';
-    }
-
     const data = await fetchProducts();
     const newData = {
         ...data,
-        status: logStatus,
     };
     return json(newData);
 };
@@ -57,7 +49,7 @@ export default function Product() {
             <div className="grid grid-cols-2  justify-center items-center px-10">
                 <h1 className=" text-3xl my-10 ">Your Products</h1>
                 <div className=" text-end">
-                    {data?.status == 'admin' && <Button onClick={() => navigate('/dashboard/productcontrol')}>Add products</Button>}
+                    <Button onClick={() => navigate('/dashboard/productcontrol')}>Add products</Button>
                 </div>
             </div>
             <div className="flex flex-wrap  p-1 gap-7 justify-center">
@@ -98,31 +90,28 @@ export default function Product() {
                         </div>
 
                         <div className="p-6 pt-0">
-                            {data?.status === "admin" && (
-                                <div className="gap-2 flex">
+                            <div className="gap-2 flex">
+                                <Button
+                                    variant="outline"
+                                    onClick={() => {
+                                        handleEdits(item);
+                                    }}
+                                >
+                                    Edit Product
+                                </Button>
+                                <Form method="post">
                                     <Button
+                                        className="bg-red-600"
                                         variant="outline"
-                                        onClick={() => {
-                                            handleEdits(item);
-                                        }}
+                                        type="submit"
                                     >
-                                        Edit Product
+                                        Delete Product
                                     </Button>
-                                    <Form method="post">
-                                        <Button
-                                            className="bg-red-600"
-                                            variant="outline"
-                                            type="submit"
-                                        >
-                                            Delete Product
-                                        </Button>
-                                        <Input type="hidden" id="id" name="id" value={String(item.id)} />
-                                    </Form>
-                                </div>
-                            )}
+                                    <Input type="hidden" id="id" name="id" value={String(item.id)} />
+                                </Form>
+                            </div>
                         </div>
                     </div>
-
                 ))}
             </div>
         </div>
