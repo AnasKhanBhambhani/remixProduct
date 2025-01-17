@@ -63,6 +63,7 @@ export const action: ActionFunction = async ({ request }: ActionFunctionArgs) =>
     }
 };
 
+// 
 export default function Product() {
     const result = useActionData<actionData>();
     return (
