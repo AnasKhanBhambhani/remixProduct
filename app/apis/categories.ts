@@ -1,20 +1,32 @@
-import { redirect } from "@remix-run/react";
 import { supabase } from "supabase.server";
 
-export const fetchCategoriesName = async () => {
+export const fetchCategories = async () => {
   let { data: categories, error } = await supabase
     .from("categories")
     .select("*");
   return { categories, error };
 };
 
-export const insertCategory = async (formdata: any) => {
-  const { name, quantity } = Object.fromEntries(formdata);
-
-  const { data, error } = await supabase
+export const fetchCategoriesName = async () => {
+  let { data: categories, error } = await supabase
     .from("categories")
-    .insert([{ name: name, quantity: quantity }])
-    .select();
+    .select("category");
+  return { categories, error };
+};
 
-  return { data, error };
+export const insertCategory = async (category: string) => {
+  console.log(category, "category");
+
+  // const { data, error } = await supabase
+  //   .from("categories")
+  //   .insert({ category: category })
+  //   .select();
+  // if (data) {
+  //   console.log(data, "aaaaaa");
+  // }
+  // if (error) {
+  //   console.log(error, "error");
+  // }
+  return category;
+  // return { data, error };
 };

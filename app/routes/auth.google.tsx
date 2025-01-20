@@ -17,12 +17,10 @@ export const action = async ({ request }: { request: Request }) => {
     })
 
     if (error) {
-        console.error('OAuth Error:', error.message);
         return json({ error: error.message }, { status: 400 });
     }
 
     if (data.url) {
-        console.log('Redirecting to OAuth provider:', data.url);
         return redirect(data.url, { headers });
     }
 

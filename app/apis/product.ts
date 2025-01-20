@@ -16,6 +16,13 @@ export const fetchProductById = async (id: string) => {
     .eq("id", id);
   return { data, error };
 };
+export const fetchProductByCategoryId = async (id: string) => {
+  const { data, error } = await supabase
+    .from("ProductsDetail")
+    .select("*")
+    .eq("category_id", id);
+  return { data, error };
+};
 
 export const updateProduct = async (
   id: string,

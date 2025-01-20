@@ -5,8 +5,8 @@ import { Form, json, redirect, useActionData, useLoaderData } from "@remix-run/r
 import { productSchema } from "~/Validations/productValidation";
 import { z } from "zod";
 import { supabase } from "supabase.server";
-import { ComboboxDemo } from "~/components/combobox";
-import { fetchCategoriesName } from "~/apis/categories";
+import ComboboxDemo from "../components/combobox";
+import { fetchCategories, fetchCategoriesName } from "~/apis/categories";
 interface actionData {
     errors?: {
         name?: { _errors: string[] };
@@ -24,7 +24,7 @@ export const meta: MetaFunction = () => {
 };
 
 export const loader: LoaderFunction = async ({ request }: ActionFunctionArgs) => {
-    const data = await fetchCategoriesName();
+    const data = await fetchCategories();
     return data;
 }
 
@@ -34,6 +34,9 @@ export const action: ActionFunction = async ({ request }: ActionFunctionArgs) =>
     const description = formData.get("description");
     const price = formData.get("price");
     const file = formData.get("file");
+    const categoryId = formData.get("category");
+
+
     if (!file || typeof file === "string") {
         return json({ error: "File upload failed" }, { status: 400 });
     }
@@ -51,12 +54,12 @@ export const action: ActionFunction = async ({ request }: ActionFunctionArgs) =>
         if (uploadError) {
             throw new Error(`File upload failed: ${uploadError.message}`);
         }
-
         const { data: fileName } = await supabase.storage
             .from('ProductImages')
             .getPublicUrl(fileUpload);
         const ProductImage = await fileName.publicUrl;
-        const validatedData = productSchema.parse({ name, description, price: parseInt(price as string) })
+        const validatedData = productSchema.parse({ name, description, price: parseInt(price as string), category_id: categoryId })
+
         const { data, error: insertError } = await supabase
             .from('ProductsDetail')
             .insert([{ ...validatedData, ProductImage }]);
@@ -72,10 +75,7 @@ export const action: ActionFunction = async ({ request }: ActionFunctionArgs) =>
 
 export default function Product() {
     const result = useActionData<actionData>();
-    const data = useLoaderData();
-    console.log('====================================');
-    console.log(data);
-    console.log('====================================');
+    const { categories } = useLoaderData<typeof loader>();
     return (
         <div className="my-16 w-full h-full max-w-[1500px] gap-5 mx-auto mr-5 flex flex-col justify-center">
             <div className="flex justify-center">
@@ -107,8 +107,7 @@ export default function Product() {
                             {result.errors.fileName._errors[0]}
                         </p>
                     )}
-                    <ComboboxDemo />
-
+                    <ComboboxDemo categories={categories} />
                     <Button type="submit">Add Product</Button>
                 </div>
             </Form>

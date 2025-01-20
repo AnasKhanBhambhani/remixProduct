@@ -33,12 +33,6 @@ const items = [
         icon: ChartBarStacked,
     },
     {
-        title: "Insert Category",
-        url: "insertcategory",
-        icon: SquarePlus,
-    },
-
-    {
         title: "Log Out",
         url: "/logout",
         icon: LogOut,

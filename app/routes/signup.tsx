@@ -27,7 +27,6 @@ export const action: ActionFunction = async ({ request }: ActionFunctionArgs) =>
             },
         })
         if (error) {
-            console.log(error);
             return Response.json(error.code, { status: 400 })
         }
 
