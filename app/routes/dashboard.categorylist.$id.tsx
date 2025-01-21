@@ -66,7 +66,7 @@ export default function Product() {
     ]
     return (
         <Dialog open={toggle} onOpenChange={handleClose}>
-            <DialogContent className="sm:max-w-[1425px]" onCloseAutoFocus={() => navigate('/dashboard/categorylist')}>
+            <DialogContent className="sm:max-w-[600px]" onCloseAutoFocus={() => navigate('/dashboard/categorylist')}>
                 <DialogHeader>
                     <DialogTitle>Edit Product Profile</DialogTitle>
                     <DialogDescription>

@@ -8,6 +8,7 @@ import { requireUserSession } from "~/session.server";
 import { Input } from "~/components/ui/input";
 import { z } from "zod";
 import { createSupabaseServerClient } from "supabase.server";
+import { fetchQuantityById, updateQuantity } from "~/apis/categories";
 
 export const meta: MetaFunction = () => {
     return [
@@ -22,6 +23,7 @@ export const loader: LoaderFunction = async ({ request }) => {
         data: { user },
     } = await supabaseClient.auth.getUser()
     const data = await fetchProducts();
+
     const newData = {
         ...data,
     };
@@ -31,15 +33,21 @@ export const loader: LoaderFunction = async ({ request }) => {
 export const action: ActionFunction = async ({ request }: ActionFunctionArgs) => {
     const formData = await request.formData();
     const id = z.string().parse(formData.get('id'));
-    const error = deleteProduct(id)
-    if (error) {
-        return error
-    }
+    const categoryId = z.string().parse(formData.get('categoryId'));
+    console.log(id, categoryId, 'dd');
+
+    const categories = await fetchQuantityById(categoryId);
+    const quantity = categories.categories?.[0]?.quantity;
+    await updateQuantity(categoryId, quantity - 1)
+
+    await deleteProduct(id, categoryId)
+
     return null;
 }
 export default function Product() {
     const navigate = useNavigate();
     const data = useLoaderData<typeof loader>();
+
     const handleEdits = (item: Products) => {
         navigate(`./edit/${item.id}`);
     };
@@ -108,6 +116,7 @@ export default function Product() {
                                         Delete Product
                                     </Button>
                                     <Input type="hidden" id="id" name="id" value={String(item.id)} />
+                                    <Input type="hidden" id="categoryId" name="categoryId" value={item.category_id} />
                                 </Form>
                             </div>
                         </div>

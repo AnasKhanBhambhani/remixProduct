@@ -35,7 +35,13 @@ export const updateProduct = async (
   return { data, error };
 };
 
-export const deleteProduct = async (id: string | null) => {
+export const deleteProduct = async (id: string | null, categoryId: string) => {
   const { error } = await supabase.from("ProductsDetail").delete().eq("id", id);
+  await supabase
+    .from("categories")
+    .update({ other_column: "otherValue" })
+    .eq("some_column", "someValue")
+    .select();
+
   return error;
 };

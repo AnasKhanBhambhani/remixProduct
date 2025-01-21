@@ -3,12 +3,10 @@ import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
 import { Form, redirect, useActionData, useNavigate } from "@remix-run/react";
 import { insertCategory } from "~/apis/categories";
-import { AddCategory } from "~/types/categories";
 import {
     Dialog,
     DialogContent,
     DialogDescription,
-    DialogFooter,
     DialogHeader,
     DialogTitle,
 } from "../components/ui/dialog"
@@ -26,13 +24,9 @@ export const meta: MetaFunction = () => {
 export const action: ActionFunction = async ({ request }: ActionFunctionArgs) => {
     const formData = await request.formData();
     const category = formData.get('category');
-    // const { data, error } = await insertCategory(formData);
-    console.log(category, 'ddddd');
+    const data = await insertCategory(category);
 
-    // if (data) {
-    //     return redirect('/dashboard/categorylist')
-    // }
-    return category
+    return redirect('/dashboard/categorylist');
 };
 
 export default function Product() {
@@ -44,7 +38,7 @@ export default function Product() {
     const result = useActionData<typeof action>();
     return (
         <Dialog open={toggle} onOpenChange={handleClose}>
-            <DialogContent onCloseAutoFocus={() => navigate(-1)}>
+            <DialogContent onCloseAutoFocus={() => navigate('/dashboard/categorylist')}>
                 <DialogHeader>
                     <DialogTitle>Add New Category</DialogTitle>
                     <DialogDescription>
@@ -59,7 +53,7 @@ export default function Product() {
                                 {result.errors.name._errors[0]}
                             </p>
                         )}
-                        <Button type="submit">Add Product</Button>
+                        <Button type="submit">Add Category</Button>
                     </Form>
                 </div>
             </DialogContent>

@@ -32,7 +32,7 @@ interface DataTableProps<TData, TValue> {
     data: TData[]
 }
 
-export function DataTable<TData, TValue>({ columns, data, }: DataTableProps<TData, TValue>) {
+export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
     const table = useReactTable({
@@ -58,12 +58,13 @@ export function DataTable<TData, TValue>({ columns, data, }: DataTableProps<TDat
                     value={table.getColumn('category') ? (table.getColumn("category")?.getFilterValue() as string) ?? "" : (table.getColumn("name")?.getFilterValue() as string) ?? ""}
                     onChange={(event) => {
                         table.getColumn('category') ? table.getColumn("category")?.setFilterValue(event.target.value)
-                        :
-                        table.getColumn("name")?.setFilterValue(event.target.value)
+                            :
+                            table.getColumn("name")?.setFilterValue(event.target.value)
                     }
                     }
                     className="max-w-sm"
                 />
+
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="outline" className="ml-auto">

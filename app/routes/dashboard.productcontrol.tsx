@@ -3,10 +3,10 @@ import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
 import { Form, json, redirect, useActionData, useLoaderData } from "@remix-run/react";
 import { productSchema } from "~/Validations/productValidation";
-import { z } from "zod";
 import { supabase } from "supabase.server";
 import ComboboxDemo from "../components/combobox";
-import { fetchCategories, fetchCategoriesName } from "~/apis/categories";
+import { fetchCategories, fetchQuantityById, updateQuantity } from "~/apis/categories";
+
 interface actionData {
     errors?: {
         name?: { _errors: string[] };
@@ -16,10 +16,11 @@ interface actionData {
     };
     message?: string;
 }
+
 export const meta: MetaFunction = () => {
     return [
-        { title: "New Remix App" },
-        { name: "description", content: "Welcome to Remix!" },
+        { title: "Products Control" },
+        { name: "description", content: "To handle your products Here" },
     ];
 };
 
@@ -63,6 +64,10 @@ export const action: ActionFunction = async ({ request }: ActionFunctionArgs) =>
         const { data, error: insertError } = await supabase
             .from('ProductsDetail')
             .insert([{ ...validatedData, ProductImage }]);
+
+        const categories = await fetchQuantityById(categoryId);
+        const quantity = categories.categories?.[0]?.quantity;
+        await updateQuantity(categoryId, quantity + 1)
 
         if (insertError) {
             throw new Error("Failed to post data");
