@@ -6,6 +6,13 @@ export const fetchCategories = async () => {
     .select("*");
   return { categories, error };
 };
+export const fetchCategoryById = async (id: FormDataEntryValue | null) => {
+  let { data: categories, error } = await supabase
+    .from("categories")
+    .select("category")
+    .eq("id", id);
+  return { categories, error };
+};
 export const fetchQuantityById = async (id: FormDataEntryValue | null) => {
   let { data: categories, error } = await supabase
     .from("categories")
@@ -39,9 +46,19 @@ export const updateQuantity = async (
     .select();
 };
 
-export const DeleteQuantity = async (
-  categoryId: FormDataEntryValue | string
+export const updateCategoryName = async (
+  categoryId: string,
+  categoryName: FormDataEntryValue | null
 ) => {
-  await supabase.from("categories").delete().eq("id", categoryId);
+  await supabase
+    .from("categories")
+    .update({ category: categoryName })
+    .eq("id", categoryId)
+    .order("category", { ascending: true })
+    .select();
+};
+
+export const DeleteQuantity = async (categoryId: FormDataEntryValue | null) => {
   await supabase.from("ProductsDetail").delete().eq("category_id", categoryId);
+  await supabase.from("categories").delete().eq("id", categoryId);
 };

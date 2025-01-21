@@ -34,8 +34,6 @@ export const action: ActionFunction = async ({ request }: ActionFunctionArgs) =>
     const formData = await request.formData();
     const id = z.string().parse(formData.get('id'));
     const categoryId = z.string().parse(formData.get('categoryId'));
-    console.log(id, categoryId, 'dd');
-
     const categories = await fetchQuantityById(categoryId);
     const quantity = categories.categories?.[0]?.quantity;
     await updateQuantity(categoryId, quantity - 1)

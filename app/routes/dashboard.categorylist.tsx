@@ -1,7 +1,7 @@
-import type { LoaderFunction, LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
+import type { ActionFunction, ActionFunctionArgs, LoaderFunction, LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import { DataTable } from "../components/categoryTable/categoryTable"
-import { Form, Outlet, useLoaderData, useNavigate } from "@remix-run/react";
-import { DeleteQuantity, fetchCategories } from "~/apis/categories";
+import { Form, Outlet, useFetcher, useLoaderData, useNavigate, useNavigation } from "@remix-run/react";
+import { fetchCategories } from "~/apis/categories";
 import { MoreHorizontal } from "lucide-react"
 import { Button } from "~/components/ui/button";
 import {
@@ -12,6 +12,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "../components/ui/dropdown-menu"
+import { Input } from "~/components/ui/input";
 
 export const meta: MetaFunction = () => {
     return [
@@ -24,6 +25,8 @@ export const loader: LoaderFunction = async ({ request }: LoaderFunctionArgs) =>
     const data = await fetchCategories();
     return data;
 }
+
+
 
 export default function Product() {
     const navigate = useNavigate();
@@ -49,30 +52,18 @@ export default function Product() {
             header: "Actions",
             cell: ({ row }) => {
                 const categoryId = row.original.id
-
                 return (
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
-                                <span className="sr-only">Open menu</span>
-                                <MoreHorizontal className="h-4 w-4" />
+                    <div className="flex gap-3">
+                        <Form method="post" className="flex gap-2" action="/category/delete">
+                            <Input type="hidden" value={categoryId} name="categoryid" />
+                            <Button type="submit" variant={"destructive"} key={categoryId}>
+                                Delete
                             </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                            <DropdownMenuItem>
-                                <Form method="post">
-                                    <Button type="submit">
-                                        Delete Category
-                                    </Button>
-                                </Form>
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem
-                                onClick={() => navigate(categoryId)}
-                            >Update Category</DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
+                        </Form>
+                        <Button
+                            onClick={() => navigate(`./edit/${categoryId}`)}
+                        > Update Category</Button>
+                    </div>
                 )
             },
         },
