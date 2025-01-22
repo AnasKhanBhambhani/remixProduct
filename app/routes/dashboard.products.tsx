@@ -9,6 +9,7 @@ import { Input } from "~/components/ui/input";
 import { z } from "zod";
 import { createSupabaseServerClient } from "supabase.server";
 import { fetchQuantityById, updateQuantity } from "~/apis/categories";
+import { Pencil, Trash2 } from "lucide-react";
 
 export const meta: MetaFunction = () => {
     return [
@@ -50,7 +51,7 @@ export default function Product() {
         navigate(`./edit/${item.id}`);
     };
     return (
-        <div className=" my-16 w-full h-full max-w-[1500px] mx-auto mr-5">
+        <div className="py-5 h-full max-w-[1500px] mx-auto">
             <Outlet />
             <div className="grid grid-cols-2  justify-center items-center px-10">
                 <h1 className=" text-3xl my-10 ">Your Products</h1>
@@ -103,15 +104,14 @@ export default function Product() {
                                         handleEdits(item);
                                     }}
                                 >
-                                    Edit Product
+                                    <Pencil className="text-green-200" />
                                 </Button>
                                 <Form method="post">
                                     <Button
-                                        className="bg-red-600"
                                         variant="outline"
                                         type="submit"
                                     >
-                                        Delete Product
+                                        <Trash2 className="text-red-500" />
                                     </Button>
                                     <Input type="hidden" id="id" name="id" value={String(item.id)} />
                                     <Input type="hidden" id="categoryId" name="categoryId" value={item.category_id} />

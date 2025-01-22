@@ -1,23 +1,19 @@
-import type { ActionFunction, LoaderFunction, MetaFunction } from "@remix-run/node";
+import type { LoaderFunction, MetaFunction } from "@remix-run/node";
 import {
     Dialog,
     DialogContent,
     DialogDescription,
-    DialogFooter,
     DialogHeader,
     DialogTitle,
 } from "../components/ui/dialog"
 import invariant from 'tiny-invariant'
-import { Form, json, useLoaderData, useNavigate } from "@remix-run/react";
-import { redirect } from "@remix-run/node";
-import { Label } from "~/components/ui/label";
-import { Input } from "~/components/ui/input";
-import { Button } from "~/components/ui/button";
+import { json, useLoaderData, useNavigate } from "@remix-run/react";
 import { useState } from "react";
-import { fetchProductByCategoryId, fetchProductById, updateProduct } from "~/apis/product";
+import { fetchProductByCategoryId } from "~/apis/product";
 import { Data, Products } from "~/types/product";
-import { productSchema } from "~/Validations/productValidation";
 import { DataTable } from "~/components/categoryTable/categoryTable";
+import { ColumnDef } from "@tanstack/react-table";
+
 
 export const meta: MetaFunction = () => {
     return [
@@ -42,7 +38,7 @@ export default function Product() {
     const handleClose = () => {
         setToggle(false)
     }
-    const columns = [
+    const columns: ColumnDef<Products>[] = [
         {
             accessorKey: "id",
             header: "ID",
@@ -57,7 +53,6 @@ export default function Product() {
             cell: ({ row }) => {
                 return <img src={row.original.ProductImage} alt="" className="w-16 h-16" />
             },
-
         },
         {
             accessorKey: "price",

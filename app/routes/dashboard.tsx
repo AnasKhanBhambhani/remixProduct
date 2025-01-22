@@ -21,8 +21,8 @@ export const loader: LoaderFunction = async ({ request }) => {
     if (!user) {
         return redirect(`/login?next=${url.pathname}`)
     }
-    
-        return json({ user });
+
+    return json({ user });
 
 };
 
@@ -30,7 +30,7 @@ export default function Dashboard() {
     const { status, user } = useLoaderData<typeof loader>();
     return (
         <SidebarProvider>
-            <AppSidebar  />
+            <AppSidebar />
             <main>
                 <SidebarTrigger />
             </main>

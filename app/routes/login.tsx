@@ -1,8 +1,7 @@
 import { redirect, useActionData } from "@remix-run/react";
 import { ActionFunction, ActionFunctionArgs, json } from '@remix-run/node'
-import { LoginForm } from "../components/ui/loginForm"
-import { createSupabaseServerClient, supabase } from "supabase.server";
-import { object, z } from "zod";
+import { createSupabaseServerClient } from "supabase.server";
+import { z } from "zod";
 import { authSchema } from "~/Validations/AuthValidation";
 import AuthForm from "~/components/Loginform";
 
