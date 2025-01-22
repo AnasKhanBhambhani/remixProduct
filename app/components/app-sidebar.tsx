@@ -9,28 +9,33 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from "../components/ui/sidebar"
-import { ChartBarStacked, Home, Inbox, LogOut, Plus, Search, SquarePlus } from "lucide-react"
+import { CalendarArrowDown, ChartBarStacked, Home, Inbox, LayoutDashboard, LogOut, PersonStanding, ShoppingCart } from "lucide-react"
 
 const items = [
     {
         title: "Dashboard",
         url: "home",
-        icon: Home,
+        icon: LayoutDashboard,
     },
     {
         title: "Products",
         url: "products",
-        icon: Inbox,
+        icon: ShoppingCart,
     },
     {
-        title: "Control Products",
-        url: "productcontrol",
-        icon: Plus,
-    },
-    {
-        title: "Categories List",
+        title: "Categories",
         url: "categorylist",
         icon: ChartBarStacked,
+    },
+    {
+        title: "Customers",
+        url: "customerslist",
+        icon: PersonStanding,
+    },
+    {
+        title: "Orders",
+        url: "orders",
+        icon: CalendarArrowDown,
     },
     {
         title: "Log Out",

@@ -7,12 +7,15 @@ import {
     DialogTitle,
 } from "../components/ui/dialog"
 import invariant from 'tiny-invariant'
-import { json, useLoaderData, useNavigate } from "@remix-run/react";
+import { Form, json, useLoaderData, useNavigate } from "@remix-run/react";
 import { useState } from "react";
 import { fetchProductByCategoryId } from "~/apis/product";
 import { Data, Products } from "~/types/product";
 import { DataTable } from "~/components/categoryTable/categoryTable";
 import { ColumnDef } from "@tanstack/react-table";
+import { Button } from "~/components/ui/button";
+import { Pencil, Trash2 } from "lucide-react";
+import { Input } from "~/components/ui/input";
 
 
 export const meta: MetaFunction = () => {
@@ -68,7 +71,7 @@ export default function Product() {
                         Make changes to your profile here. Click save when you are done.
                     </DialogDescription>
                 </DialogHeader>
-                <DataTable columns={columns} data={data} />
+                <DataTable columns={columns} data={data} filter='name' />
             </DialogContent>
         </Dialog>
     );

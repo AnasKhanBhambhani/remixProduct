@@ -1,10 +1,8 @@
 import { ActionFunction, ActionFunctionArgs, json, type LoaderFunction, type MetaFunction } from "@remix-run/node";
-import { Card } from "../components/ui/card";
 import { deleteProduct, fetchProducts } from "~/apis/product";
 import { Form, Outlet, useLoaderData, useNavigate } from "@remix-run/react";
 import { Products } from "~/types/product";
 import { Button } from "../components/ui/button";
-import { requireUserSession } from "~/session.server";
 import { Input } from "~/components/ui/input";
 import { z } from "zod";
 import { createSupabaseServerClient } from "supabase.server";
@@ -13,8 +11,8 @@ import { Pencil, Trash2 } from "lucide-react";
 
 export const meta: MetaFunction = () => {
     return [
-        { title: "New Remix App" },
-        { name: "description", content: "Welcome to Remix!" },
+        { title: "Products" },
+        { name: "description", content: "Here is Your Products" },
     ];
 };
 
@@ -43,10 +41,10 @@ export const action: ActionFunction = async ({ request }: ActionFunctionArgs) =>
 
     return null;
 }
+
 export default function Product() {
     const navigate = useNavigate();
     const data = useLoaderData<typeof loader>();
-
     const handleEdits = (item: Products) => {
         navigate(`./edit/${item.id}`);
     };
@@ -56,7 +54,7 @@ export default function Product() {
             <div className="grid grid-cols-2  justify-center items-center px-10">
                 <h1 className=" text-3xl my-10 ">Your Products</h1>
                 <div className=" text-end">
-                    <Button onClick={() => navigate('/dashboard/productcontrol')}>Add products</Button>
+                    <Button onClick={() => navigate('/dashboard/products/productcontrol')}>Add products</Button>
                 </div>
             </div>
             <div className="flex flex-wrap  p-1 gap-7 justify-center">

@@ -1,12 +1,17 @@
 import { redirect, useActionData } from "@remix-run/react";
-import { ActionFunction, ActionFunctionArgs, json, LoaderFunction, LoaderFunctionArgs } from '@remix-run/node'
+import { ActionFunction, ActionFunctionArgs, json } from '@remix-run/node'
 import { createSupabaseServerClient } from "supabase.server";
 import { z } from "zod";
-import { authSchema } from "~/Validations/AuthValidation";
 import Authenticated_signupform from "~/components/signupForm";
 import { signUpSchema } from "~/Validations/signupValidation";
+import { MetaFunction } from "@remix-run/node";
 
-
+export const meta: MetaFunction = () => {
+    return [
+        { title: "SignUp | Product management system" },
+        { name: "description", content: "SignUp to access the product management system" },
+    ];
+};
 
 export const action: ActionFunction = async ({ request }: ActionFunctionArgs) => {
     const url = new URL(request.url);
@@ -43,7 +48,6 @@ export const action: ActionFunction = async ({ request }: ActionFunctionArgs) =>
     }
 
 }
-
 
 export default function LoginPage() {
     const actionData = useActionData<typeof action>();

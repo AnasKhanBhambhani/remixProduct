@@ -1,0 +1,72 @@
+import type { ActionFunction, ActionFunctionArgs, LoaderFunction, LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
+import { DataTable } from "../components/categoryTable/categoryTable"
+import { Form, Outlet, useFetcher, useLoaderData, useNavigate, useNavigation } from "@remix-run/react";
+import { fetchCategories } from "~/apis/categories";
+import { MoreHorizontal } from "lucide-react"
+import { Button } from "~/components/ui/button";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "../components/ui/dropdown-menu"
+import { Input } from "~/components/ui/input";
+import { ColumnDef } from "@tanstack/react-table";
+import { Products } from "~/types/product";
+import { Customer } from "~/types/customers";
+import { fetchCustomers } from "~/apis/customer";
+
+export const meta: MetaFunction = () => {
+    return [
+        { title: "Your Product Category List" },
+        { name: "description", content: "You can watch all the Categories with its products" },
+    ];
+};
+
+export const loader: LoaderFunction = async ({ request }: LoaderFunctionArgs) => {
+    const data = await fetchCustomers();
+    return data;
+}
+
+export default function Customers() {
+    const navigate = useNavigate();
+    const { customers } = useLoaderData<typeof loader>();
+    console.log(customers, 'sssss');
+
+    const columns: ColumnDef<Customer>[] = [
+        {
+            accessorKey: "id",
+            header: "Customer-ID",
+        },
+        {
+            accessorKey: "name",
+            header: "Name",
+        },
+        {
+            accessorKey: "email",
+            header: "Email",
+        },
+        {
+            accessorKey: "phone",
+            header: "Phone",
+        },
+        {
+            accessorKey: "address",
+            header: "Address",
+        },
+    ]
+    return (
+        <div className="container mx-auto py-10 px-10 ">
+            <Outlet />
+            <div className="text-3xl mt-3 flex justify-between">
+                <h1>Customers</h1>
+                <Button onClick={() => navigate('./addcustomer')}>Add Customers</Button>
+            </div>
+            <div>
+                <DataTable columns={columns} data={customers} filter='name' />
+            </div>
+        </div>
+    );
+}

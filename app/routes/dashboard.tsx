@@ -2,13 +2,12 @@ import { LoaderFunction, MetaFunction, redirect } from "@remix-run/node";
 import { SidebarProvider, SidebarTrigger } from "../components/ui/sidebar";
 import { AppSidebar } from "../components/app-sidebar";
 import { json, Outlet, useLoaderData, } from "@remix-run/react";
-import { requireUserSession } from "../session.server";
-import { createSupabaseServerClient, supabase } from "supabase.server";
+import { createSupabaseServerClient } from "supabase.server";
 
 export const meta: MetaFunction = () => {
     return [
-        { title: "New Remix App" },
-        { name: "description", content: "Welcome to Remix!" },
+        { title: "Dashboard" },
+        { name: "description", content: "Welcome to the Dashboard" },
     ];
 };
 

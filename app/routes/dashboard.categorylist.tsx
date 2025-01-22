@@ -1,6 +1,6 @@
 import type { ActionFunction, ActionFunctionArgs, LoaderFunction, LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import { DataTable } from "../components/categoryTable/categoryTable"
-import { Form, Outlet, useFetcher, useLoaderData, useNavigate, useNavigation } from "@remix-run/react";
+import { Form, Link, Outlet, useFetcher, useLoaderData, useNavigate, useNavigation } from "@remix-run/react";
 import { fetchCategories } from "~/apis/categories";
 import { MoreHorizontal } from "lucide-react"
 import { Button } from "~/components/ui/button";
@@ -38,7 +38,7 @@ export default function Product() {
             accessorKey: "category",
             header: "Category",
             cell: ({ row }) => {
-                return <div className="cursor-pointer" onClick={() => { navigate(`${row.original.id}`) }}>{row.getValue('category')}</div>
+                return <Link to={`${row?.original?.id}`} className="cursor-pointer underline text-blue-500">{row?.getValue('category')}</Link>
             },
         },
         {
@@ -78,7 +78,7 @@ export default function Product() {
                 <Button onClick={() => navigate('./insertcategory')}>Add Category</Button>
             </div>
             <div>
-                <DataTable columns={columns} data={categories?.categories} />
+                <DataTable columns={columns} data={categories?.categories} filter='category' />
             </div>
         </div>
     );

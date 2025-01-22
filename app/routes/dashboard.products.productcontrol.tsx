@@ -1,12 +1,20 @@
 import type { ActionFunction, ActionFunctionArgs, LoaderFunction, MetaFunction } from "@remix-run/node";
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
-import { Form, json, redirect, useActionData, useLoaderData } from "@remix-run/react";
+import { Form, json, redirect, useActionData, useLoaderData, useNavigate } from "@remix-run/react";
 import { productSchema } from "~/Validations/productValidation";
 import { supabase } from "supabase.server";
 import ComboboxDemo from "../components/combobox";
 import { fetchCategories, fetchQuantityById, updateQuantity } from "~/apis/categories";
 import { z } from "zod";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+} from "../components/ui/dialog"
+import { useState } from "react";
 
 interface actionData {
     errors?: {
@@ -84,46 +92,56 @@ export const action: ActionFunction = async ({ request }: ActionFunctionArgs) =>
     }
 };
 
-export default function Product() {
+export default function ProductControl() {
+    const [toggle, setToggle] = useState(true)
+    const navigate = useNavigate();
+    const handleClose = () => {
+        setToggle(false)
+    }
     const result = useActionData<actionData>();
     console.log(result?.errors, 'result');
 
     const { categories } = useLoaderData<typeof loader>();
     return (
-        <div className="py-5 h-full max-w-[1500px] mx-auto flex flex-col gap-3">
-            <div className="flex justify-center">
-                <h1 className="text-2xl">Product Control</h1>
-            </div>
-            <Form className="flex justify-center bg-white rounded-lg shadow-md" method="post" encType="multipart/form-data">
-                <div className="grid grid-cols-1 gap-5  rounded-lg p-32">
-                    <Input type="text" name="name" id="name" placeholder="Enter Product Name" />
-                    {result?.errors?.name && (
-                        <p className="text-red-500 text-xs -mt-4">
-                            {result.errors.name}
-                        </p>
-                    )}
-                    <Input type="text" name="description" id="description" placeholder="Enter Product Description" />
-                    {result?.errors?.description && (
-                        <p className="text-red-500 text-xs">
-                            {result.errors.description}
-                        </p>
-                    )}
-                    <Input type="text" name="price" id="price" placeholder="Enter Product Price" />
-                    {result?.errors?.price && (
-                        <p className="text-red-500 text-xs -mt-4">
-                            {result.errors.price}
-                        </p>
-                    )}
-                    <Input type="file" name="file" id="file" placeholder="Choose Product Image" accept="image/png, image/gif, image/jpeg" required />
-                    <ComboboxDemo categories={categories} />
-                    {result?.errors?.category_id && (
-                        <p className="text-red-500 text-xs -mt-4">
-                            {result.errors.category_id}
-                        </p>
-                    )}
-                    <Button type="submit">Add Product</Button>
-                </div>
-            </Form>
-        </div>
+        <Dialog open={toggle} onOpenChange={handleClose}>
+            <DialogContent onCloseAutoFocus={() => navigate('/dashboard/products')}>
+                <DialogHeader>
+                    <DialogTitle>Add New Product</DialogTitle>
+                    <DialogDescription>
+                        Make changes to your profile here. Click save when you are done.
+                    </DialogDescription>
+                </DialogHeader>
+                <Form className="flex justify-center " method="post" encType="multipart/form-data">
+                    <div className="grid grid-cols-1 gap-5  rounded-lg p-32">
+                        <Input type="text" name="name" id="name" placeholder="Enter Product Name" />
+                        {result?.errors?.name && (
+                            <p className="text-red-500 text-xs -mt-4">
+                                {result.errors.name}
+                            </p>
+                        )}
+                        <Input type="text" name="description" id="description" placeholder="Enter Product Description" />
+                        {result?.errors?.description && (
+                            <p className="text-red-500 text-xs">
+                                {result.errors.description}
+                            </p>
+                        )}
+                        <Input type="text" name="price" id="price" placeholder="Enter Product Price" />
+                        {result?.errors?.price && (
+                            <p className="text-red-500 text-xs -mt-4">
+                                {result.errors.price}
+                            </p>
+                        )}
+                        <Input type="file" name="file" id="file" placeholder="Choose Product Image" accept="image/png, image/gif, image/jpeg" required />
+                        <ComboboxDemo categories={categories} />
+                        {result?.errors?.category_id && (
+                            <p className="text-red-500 text-xs -mt-4">
+                                {result.errors.category_id}
+                            </p>
+                        )}
+                        <Button type="submit">Add Product</Button>
+                    </div>
+                </Form>
+            </DialogContent>
+        </Dialog>
     );
 }

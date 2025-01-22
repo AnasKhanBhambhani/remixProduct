@@ -10,12 +10,14 @@ import {
     getFilteredRowModel,
     VisibilityState,
 } from "@tanstack/react-table"
+
 import {
     DropdownMenu,
     DropdownMenuCheckboxItem,
     DropdownMenuContent,
     DropdownMenuTrigger,
 } from "../../components/ui/dropdown-menu"
+
 import {
     Table,
     TableBody,
@@ -26,13 +28,15 @@ import {
 } from "../ui/table"
 import React from "react"
 
-
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
     data: TData[]
+    filter: string;
 }
 
-export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
+export function DataTable<TData, TValue>({ columns, data, filter }: DataTableProps<TData, TValue>) {
+    console.log(filter, 'filter');
+
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
     const table = useReactTable({
@@ -51,20 +55,13 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
 
     return (
         <div className="bg-white rounded-md p-3 my-2">
-
             <div className="flex items-center py-4">
                 <Input
-                    placeholder="Filter categories..."
-                    value={table.getColumn('category') ? (table.getColumn("category")?.getFilterValue() as string) ?? "" : (table.getColumn("name")?.getFilterValue() as string) ?? ""}
-                    onChange={(event) => {
-                        table.getColumn('category') ? table.getColumn("category")?.setFilterValue(event.target.value)
-                            :
-                            table.getColumn("name")?.setFilterValue(event.target.value)
-                    }
-                    }
+                    placeholder={`Filter ${filter}...`}
+                    value={filter && ((table.getColumn(filter)?.getFilterValue() as string) ?? "")}
+                    onChange={(event) => { table.getColumn(filter)?.setFilterValue(event.target.value) }}
                     className="max-w-sm"
                 />
-
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="outline" className="ml-auto">

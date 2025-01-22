@@ -10,10 +10,11 @@ import { fetchCategories } from "~/apis/categories";
 
 export const meta: MetaFunction = () => {
     return [
-        { title: "New Remix App" },
-        { name: "description", content: "Welcome to Remix!" },
+        { title: "Dashboard | product management system" },
+        { name: "description", content: "Here is the Dashboard of the product management system" },
     ];
 };
+
 export const loader: LoaderFunction = async () => {
     const data = await fetchProducts();
     const category = await fetchCategories();
@@ -23,8 +24,6 @@ export const loader: LoaderFunction = async () => {
 export default function Dashboard() {
     const user: String = useOutletContext();
     const { data, category } = useLoaderData<typeof loader>();
-    console.log(data, 'dataaaa');
-
     return (
         <div className="py-20 h-full max-w-[1500px] mx-auto">
             <div className="flex justify-between  items-center ">
