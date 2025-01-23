@@ -6,7 +6,7 @@ import { AppWindowMac, CircleDollarSign, Weight } from "lucide-react"
 import { ProfitChart } from "../components/ProfitChart";
 import { fetchProducts } from "~/apis/product";
 import { useLoaderData, useOutletContext } from "@remix-run/react";
-import { fetchCategories } from "~/apis/categories";
+import { fetchCategoriesList } from "~/apis/categories";
 
 export const meta: MetaFunction = () => {
     return [
@@ -17,7 +17,7 @@ export const meta: MetaFunction = () => {
 
 export const loader: LoaderFunction = async () => {
     const data = await fetchProducts();
-    const category = await fetchCategories();
+    const category = await fetchCategoriesList();
     return json({ data, category });
 }
 
