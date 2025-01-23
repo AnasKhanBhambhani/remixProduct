@@ -6,6 +6,20 @@ export const fetchCategories = async () => {
     .select("*");
   return { categories, error };
 };
+export const fetchCategoriesWithPagination = async (
+  page: number,
+  limit: number
+) => {
+  const {
+    data: categories,
+    error,
+    count,
+  } = await supabase
+    .from("categories")
+    .select("*", { count: "exact" })
+    .range(page * limit, (page + 1) * limit - 1);
+  return { categories, error, totalCount: count };
+};
 export const fetchCategoryById = async (id: FormDataEntryValue | null) => {
   let { data: categories, error } = await supabase
     .from("categories")

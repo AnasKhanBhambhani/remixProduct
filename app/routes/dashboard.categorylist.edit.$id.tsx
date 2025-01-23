@@ -8,18 +8,14 @@ import {
 } from "../components/ui/dialog"
 import invariant from 'tiny-invariant'
 import { Form, json, redirect, useLoaderData, useNavigate } from "@remix-run/react";
-
 import { useState } from "react";
-import { fetchProductByCategoryId } from "~/apis/product";
-import { Data } from "~/types/product";
-import { DataTable } from "~/components/categoryTable/categoryTable";
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
 import { fetchCategoryById, updateCategoryName } from "~/apis/categories";
 
 export const meta: MetaFunction = () => {
     return [
-        { title: "New Remix App" },
+        { title: "Edit Category" },
         { name: "description", content: "Welcome to Remix!" },
     ];
 };

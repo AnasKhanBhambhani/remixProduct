@@ -1,6 +1,5 @@
 import { redirect, type LoaderFunctionArgs } from '@remix-run/node'
 import { createServerClient, parseCookieHeader, serializeCookieHeader } from '@supabase/ssr'
-import { parse } from 'postcss'
 
 export async function loader({ request }: LoaderFunctionArgs) {
     const requestUrl = new URL(request.url)
@@ -9,7 +8,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
     const headers = new Headers()
 
     if (code) {
-
         const supabase = createServerClient(process.env.SUPABASE_URL!, process.env.SUPABASE_ANON_KEY!, {
             cookies: {
                 getAll() {
@@ -22,13 +20,10 @@ export async function loader({ request }: LoaderFunctionArgs) {
                 },
             },
         })
-
         const { error } = await supabase.auth.exchangeCodeForSession(code)
-
         if (!error) {
             return redirect(next, { headers })
         }
     }
-
     return redirect('/auth/auth-code-error', { headers })
 }

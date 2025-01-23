@@ -1,17 +1,8 @@
-import type { ActionFunction, ActionFunctionArgs, LoaderFunction, LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
+import type { LoaderFunction, LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import { DataTable } from "../components/categoryTable/categoryTable"
-import { Form, Link, Outlet, useFetcher, useLoaderData, useNavigate, useNavigation } from "@remix-run/react";
-import { fetchCategories } from "~/apis/categories";
-import { MoreHorizontal } from "lucide-react"
+import { Form, Link, Outlet, useLoaderData, useNavigate, useSearchParams } from "@remix-run/react";
+import { fetchCategories, fetchCategoriesWithPagination } from "~/apis/categories";
 import { Button } from "~/components/ui/button";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "../components/ui/dropdown-menu"
 import { Input } from "~/components/ui/input";
 import { ColumnDef } from "@tanstack/react-table";
 import { Products } from "~/types/product";
@@ -24,13 +15,16 @@ export const meta: MetaFunction = () => {
 };
 
 export const loader: LoaderFunction = async ({ request }: LoaderFunctionArgs) => {
-    const data = await fetchCategories();
+    const searchParams = new URL(request.url).searchParams;
+    const { page, limit } = Object.fromEntries(searchParams.entries());
+    console.log(page, limit);
+    const data = await fetchCategoriesWithPagination(Number(page) || 0, Number(limit) || 10);
     return data;
 }
 
 
 
-export default function Product() {
+export default function Categories() {
     const navigate = useNavigate();
     const categories = useLoaderData<typeof loader>();
     const columns: ColumnDef<Products>[] = [
@@ -78,7 +72,7 @@ export default function Product() {
                 <Button onClick={() => navigate('./insertcategory')}>Add Category</Button>
             </div>
             <div>
-                <DataTable columns={columns} data={categories?.categories} filter='category' />
+                <DataTable columns={columns} data={categories?.categories} filter='category' totalCount={categories?.totalCount} />
             </div>
         </div>
     );

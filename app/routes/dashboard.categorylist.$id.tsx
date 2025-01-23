@@ -7,20 +7,16 @@ import {
     DialogTitle,
 } from "../components/ui/dialog"
 import invariant from 'tiny-invariant'
-import { Form, json, useLoaderData, useNavigate } from "@remix-run/react";
+import { json, useLoaderData, useNavigate } from "@remix-run/react";
 import { useState } from "react";
 import { fetchProductByCategoryId } from "~/apis/product";
 import { Data, Products } from "~/types/product";
 import { DataTable } from "~/components/categoryTable/categoryTable";
 import { ColumnDef } from "@tanstack/react-table";
-import { Button } from "~/components/ui/button";
-import { Pencil, Trash2 } from "lucide-react";
-import { Input } from "~/components/ui/input";
-
 
 export const meta: MetaFunction = () => {
     return [
-        { title: "New Remix App" },
+        { title: "Category" },
         { name: "description", content: "Welcome to Remix!" },
     ];
 };
@@ -35,12 +31,12 @@ export const loader: LoaderFunction = async ({ params }) => {
 
 export default function Product() {
     const { data, error }: Data = useLoaderData();
-
     const navigate = useNavigate()
     const [toggle, setToggle] = useState(true)
     const handleClose = () => {
         setToggle(false)
     }
+
     const columns: ColumnDef<Products>[] = [
         {
             accessorKey: "id",
@@ -62,6 +58,7 @@ export default function Product() {
             header: "Price",
         },
     ]
+
     return (
         <Dialog open={toggle} onOpenChange={handleClose}>
             <DialogContent className="sm:max-w-[600px]" onCloseAutoFocus={() => navigate('/dashboard/categorylist')}>

@@ -1,5 +1,5 @@
 import { json, redirect } from "@remix-run/node";
-import { createSupabaseServerClient, supabase } from "supabase.server";
+import { createSupabaseServerClient } from "supabase.server";
 
 
 export const action = async ({ request }: { request: Request }) => {
@@ -12,7 +12,6 @@ export const action = async ({ request }: { request: Request }) => {
                 prompt: 'consent',
             },
             redirectTo: 'http://localhost:5173/auth/callback',
-            // shouldCreateUser: true,
         } as any,
     })
 

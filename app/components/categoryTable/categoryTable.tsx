@@ -10,14 +10,12 @@ import {
     getFilteredRowModel,
     VisibilityState,
 } from "@tanstack/react-table"
-
 import {
     DropdownMenu,
     DropdownMenuCheckboxItem,
     DropdownMenuContent,
     DropdownMenuTrigger,
 } from "../../components/ui/dropdown-menu"
-
 import {
     Table,
     TableBody,
@@ -27,18 +25,22 @@ import {
     TableRow,
 } from "../ui/table"
 import React from "react"
+import { useNavigate, useSearchParams } from "@remix-run/react"
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
     data: TData[]
     filter: string;
+    totalCount: number;
 }
 
-export function DataTable<TData, TValue>({ columns, data, filter }: DataTableProps<TData, TValue>) {
-    console.log(filter, 'filter');
-
+export function DataTable<TData, TValue>({ columns, data, filter, totalCount }: DataTableProps<TData, TValue>) {
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
+    let [searchParams, setSearchParams] = useSearchParams();
+    const limit = Number(searchParams.get("limit") || "10");
+    const page = Number(searchParams.get("page") || "0");
+    const navigate = useNavigate();
     const table = useReactTable({
         data,
         columns,
@@ -50,8 +52,12 @@ export function DataTable<TData, TValue>({ columns, data, filter }: DataTablePro
         state: {
             columnFilters,
             columnVisibility,
-        }
+        },
+        manualPagination: true,
     })
+    const handlePagination = (newPage: number, newLimit: number) => {
+        navigate(`?page=${newPage}&limit=${newLimit}`);
+    }
 
     return (
         <div className="bg-white rounded-md p-3 my-2">
@@ -142,21 +148,18 @@ export function DataTable<TData, TValue>({ columns, data, filter }: DataTablePro
                 <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => table.previousPage()}
-                    disabled={!table.getCanPreviousPage()}
-                >
+                    onClick={() => handlePagination(Number(page) - 1, Number(limit))}
+                    disabled={Number(page) <= 0}>
                     Previous
                 </Button>
                 <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => table.nextPage()}
-                    disabled={!table.getCanNextPage()}
-                >
+                    onClick={() => handlePagination(Number(page) + 1, Number(limit))}
+                    disabled={Number(page + 1) * Number(limit) >= totalCount}>
                     Next
                 </Button>
             </div>
-
         </div>
     )
 }
