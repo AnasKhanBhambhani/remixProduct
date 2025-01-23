@@ -38,7 +38,7 @@ export function DataTable<TData, TValue>({ columns, data, filter, totalCount }: 
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
     let [searchParams, setSearchParams] = useSearchParams();
-    const limit = Number(searchParams.get("limit") || "10");
+    const limit = Number(searchParams.get("limit") || "5");
     const page = Number(searchParams.get("page") || "0");
     const navigate = useNavigate();
     const table = useReactTable({

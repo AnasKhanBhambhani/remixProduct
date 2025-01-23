@@ -1,20 +1,8 @@
-import type { ActionFunction, ActionFunctionArgs, LoaderFunction, LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
+import type { LoaderFunction, LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import { DataTable } from "../components/categoryTable/categoryTable"
-import { Form, Outlet, useFetcher, useLoaderData, useNavigate, useNavigation } from "@remix-run/react";
-import { fetchCategories } from "~/apis/categories";
-import { MoreHorizontal } from "lucide-react"
+import { Outlet, useLoaderData, useNavigate } from "@remix-run/react";
 import { Button } from "~/components/ui/button";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "../components/ui/dropdown-menu"
-import { Input } from "~/components/ui/input";
 import { ColumnDef } from "@tanstack/react-table";
-import { Products } from "~/types/product";
 import { Customer } from "~/types/customers";
 import { fetchCustomers } from "~/apis/customer";
 
@@ -26,15 +14,15 @@ export const meta: MetaFunction = () => {
 };
 
 export const loader: LoaderFunction = async ({ request }: LoaderFunctionArgs) => {
-    const data = await fetchCustomers();
+    const searchParams = new URL(request.url).searchParams;
+    const { page, limit } = Object.fromEntries(searchParams.entries());
+    const data = await fetchCustomers(Number(page) || 0, Number(limit) || 5);
     return data;
 }
 
 export default function Customers() {
     const navigate = useNavigate();
-    const { customers } = useLoaderData<typeof loader>();
-    console.log(customers, 'sssss');
-
+    const { customers, totalCount } = useLoaderData<typeof loader>();
     const columns: ColumnDef<Customer>[] = [
         {
             accessorKey: "id",
@@ -65,7 +53,7 @@ export default function Customers() {
                 <Button onClick={() => navigate('./addcustomer')}>Add Customers</Button>
             </div>
             <div>
-                <DataTable columns={columns} data={customers} filter='name' />
+                <DataTable columns={columns} data={customers} filter='name' totalCount={totalCount} />
             </div>
         </div>
     );

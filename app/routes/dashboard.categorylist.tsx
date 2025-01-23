@@ -1,7 +1,7 @@
 import type { LoaderFunction, LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import { DataTable } from "../components/categoryTable/categoryTable"
-import { Form, Link, Outlet, useLoaderData, useNavigate, useSearchParams } from "@remix-run/react";
-import { fetchCategories, fetchCategoriesWithPagination } from "~/apis/categories";
+import { Form, Link, Outlet, ShouldRevalidateFunctionArgs, useLoaderData, useNavigate, useSearchParams } from "@remix-run/react";
+import { fetchCategories } from "~/apis/categories";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { ColumnDef } from "@tanstack/react-table";
@@ -17,12 +17,13 @@ export const meta: MetaFunction = () => {
 export const loader: LoaderFunction = async ({ request }: LoaderFunctionArgs) => {
     const searchParams = new URL(request.url).searchParams;
     const { page, limit } = Object.fromEntries(searchParams.entries());
-    console.log(page, limit);
-    const data = await fetchCategoriesWithPagination(Number(page) || 0, Number(limit) || 10);
+    const data = await fetchCategories(Number(page) || 0, Number(limit) || 5);
     return data;
 }
 
-
+export function shouldRevalidate({ defaultShouldRevalidate }: ShouldRevalidateFunctionArgs) {
+    return false
+}
 
 export default function Categories() {
     const navigate = useNavigate();

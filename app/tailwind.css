@@ -9,7 +9,24 @@ body {
   @media (prefers-color-scheme: dark) {
     color-scheme: dark;
   }
+  .scrollbar-hover::-webkit-scrollbar {
+    width: 4px;
+  }
   
+  .scrollbar-hover::-webkit-scrollbar-thumb {
+    background: rgba(158, 158, 158, 0.2);
+    border-radius: 4px;
+  }
+  
+  .scrollbar-hover::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .scrollbar-hover:hover::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+
 }
 
 

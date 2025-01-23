@@ -5,7 +5,7 @@ import { Form, json, redirect, useActionData, useLoaderData, useNavigate } from 
 import { productSchema } from "~/Validations/productValidation";
 import { supabase } from "supabase.server";
 import ComboboxDemo from "../components/combobox";
-import { fetchCategories, fetchQuantityById, updateQuantity } from "~/apis/categories";
+import { fetchCategoriesList, fetchCategoriesName, fetchQuantityById, updateQuantity } from "~/apis/categories";
 import { z } from "zod";
 import {
     Dialog,
@@ -34,7 +34,8 @@ export const meta: MetaFunction = () => {
 };
 
 export const loader: LoaderFunction = async ({ request }: ActionFunctionArgs) => {
-    const data = await fetchCategories();
+    // const data = await fetchCategoriesName();
+    const data = await fetchCategoriesList();
     return data;
 }
 
@@ -69,8 +70,6 @@ export const action: ActionFunction = async ({ request }: ActionFunctionArgs) =>
             .getPublicUrl(fileUpload);
         const ProductImage = await fileName.publicUrl;
         const validatedData = productSchema.parse({ name, description, price, category_id: categoryId })
-        console.log(validatedData, 'validationData');
-
         const { data, error: insertError } = await supabase
             .from('ProductsDetail')
             .insert([{ ...validatedData, ProductImage }]);
@@ -86,7 +85,6 @@ export const action: ActionFunction = async ({ request }: ActionFunctionArgs) =>
     } catch (error) {
         if (error instanceof z.ZodError) {
             const errors = error.flatten().fieldErrors;
-            console.log(error, 'errrrr');
             return json({ success: false, errors }, { status: 400 });
         }
     }
@@ -99,9 +97,8 @@ export default function ProductControl() {
         setToggle(false)
     }
     const result = useActionData<actionData>();
-    console.log(result?.errors, 'result');
-
     const { categories } = useLoaderData<typeof loader>();
+
     return (
         <Dialog open={toggle} onOpenChange={handleClose}>
             <DialogContent onCloseAutoFocus={() => navigate('/dashboard/products')}>

@@ -1,15 +1,12 @@
 import { supabase } from "supabase.server";
 
-export const fetchCategories = async () => {
+export const fetchCategoriesList = async () => {
   let { data: categories, error } = await supabase
     .from("categories")
     .select("*");
   return { categories, error };
 };
-export const fetchCategoriesWithPagination = async (
-  page: number,
-  limit: number
-) => {
+export const fetchCategories = async (page: number, limit: number) => {
   const {
     data: categories,
     error,

@@ -45,9 +45,9 @@ const ComboboxDemo: React.FC<CategoryName> = ({ categories }) => {
                 <PopoverContent className="w-[200px] p-0">
                     <Command>
                         <CommandInput placeholder="Search Category..." />
-                        <CommandList className="overflow-auto scrollbar-hide">
+                        <CommandList className="max-h-[300px] overflow-y-auto scrollbar-hover">
                             <CommandEmpty>No Category found.</CommandEmpty>
-                            <CommandGroup>
+                            <CommandGroup >
                                 {categories.map((item) => (
                                     <CommandItem
                                         key={item.id}

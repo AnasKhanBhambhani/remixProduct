@@ -7,7 +7,7 @@ import {
     DialogTitle,
 } from "../components/ui/dialog"
 import invariant from 'tiny-invariant'
-import { json, useLoaderData, useNavigate } from "@remix-run/react";
+import { json, ShouldRevalidateFunctionArgs, useLoaderData, useNavigate } from "@remix-run/react";
 import { useState } from "react";
 import { fetchProductByCategoryId } from "~/apis/product";
 import { Data, Products } from "~/types/product";
@@ -21,16 +21,19 @@ export const meta: MetaFunction = () => {
     ];
 };
 
-export const loader: LoaderFunction = async ({ params }) => {
+export const loader: LoaderFunction = async ({ params, request }) => {
     invariant(params.id, "Id must be present")
-    const data = await fetchProductByCategoryId(params.id)
+    const searchParams = new URL(request.url).searchParams;
+    const { page, limit } = Object.fromEntries(searchParams.entries());
+    const data = await fetchProductByCategoryId(Number(page) || 0, Number(limit) || 5, params.id)
     return json(data);
 }
-
-
+export function shouldRevalidate({ defaultShouldRevalidate }: ShouldRevalidateFunctionArgs) {
+    return defaultShouldRevalidate
+}
 
 export default function Product() {
-    const { data, error }: Data = useLoaderData();
+    const { data, totalCount }: Data = useLoaderData();
     const navigate = useNavigate()
     const [toggle, setToggle] = useState(true)
     const handleClose = () => {
@@ -68,7 +71,7 @@ export default function Product() {
                         Make changes to your profile here. Click save when you are done.
                     </DialogDescription>
                 </DialogHeader>
-                <DataTable columns={columns} data={data} filter='name' />
+                <DataTable columns={columns} data={data} filter='name' totalCount={totalCount} />
             </DialogContent>
         </Dialog>
     );

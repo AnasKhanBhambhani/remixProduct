@@ -10,6 +10,7 @@ export type Products = {
 export type Data = {
   data: Products[];
   error: string;
+  totalCount: number;
 };
 export type UpdatedProduct = {
   name: string;
