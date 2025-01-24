@@ -24,13 +24,14 @@ export const meta: MetaFunction = () => {
 export const loader: LoaderFunction = async ({ params, request }) => {
     invariant(params.id, "Id must be present")
     const searchParams = new URL(request.url).searchParams;
-    const { page, limit } = Object.fromEntries(searchParams.entries());
+    const { page, limit, search } = Object.fromEntries(searchParams.entries());
     const data = await fetchProductByCategoryId(Number(page) || 0, Number(limit) || 5, params.id)
     return json(data);
 }
-export function shouldRevalidate({ defaultShouldRevalidate }: ShouldRevalidateFunctionArgs) {
-    return defaultShouldRevalidate
-}
+// export function shouldRevalidate({ defaultShouldRevalidate, }: ShouldRevalidateFunctionArgs) {
+//     console.log(defaultShouldRevalidate, 'defaultShouldRevalidate');
+//     return defaultShouldRevalidate
+// }
 
 export default function Product() {
     const { data, totalCount }: Data = useLoaderData();

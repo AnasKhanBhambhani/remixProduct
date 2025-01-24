@@ -6,16 +6,32 @@ export const fetchCategoriesList = async () => {
     .select("*");
   return { categories, error };
 };
-export const fetchCategories = async (page: number, limit: number) => {
-  const {
-    data: categories,
-    error,
-    count,
-  } = await supabase
+// export const fetchCategories = async (page: number, limit: number) => {
+//   const {
+//     data: categories,
+//     error,
+//     count,
+//   } = await supabase
+//     .from("categories")
+//     .select("*", { count: "exact" })
+//     .ilike("category", "")
+//     .range(page * limit, (page + 1) * limit - 1);
+//   return { categories, error, totalCount: count };
+// };
+export const fetchCategories = async (
+  page: number,
+  limit: number,
+  search: string
+) => {
+  let query = supabase
     .from("categories")
     .select("*", { count: "exact" })
     .range(page * limit, (page + 1) * limit - 1);
-  return { categories, error, totalCount: count };
+  if (search) {
+    query = query.ilike("category", `%${search}%`);
+  }
+  const { data: categories, error, count: totalCount } = await query;
+  return { categories, error, totalCount };
 };
 export const fetchCategoryById = async (id: FormDataEntryValue | null) => {
   let { data: categories, error } = await supabase

@@ -24,8 +24,9 @@ import {
     TableHeader,
     TableRow,
 } from "../ui/table"
-import React from "react"
+import React, { useEffect, useState } from "react"
 import { useNavigate, useSearchParams } from "@remix-run/react"
+import UseDebounce from "./useDebounce"
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
@@ -35,8 +36,9 @@ interface DataTableProps<TData, TValue> {
 }
 
 export function DataTable<TData, TValue>({ columns, data, filter, totalCount }: DataTableProps<TData, TValue>) {
-    const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
-    const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
+    const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+    const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+    const [filtervalue, setFiltervalue] = useState('')
     let [searchParams, setSearchParams] = useSearchParams();
     const limit = Number(searchParams.get("limit") || "5");
     const page = Number(searchParams.get("page") || "0");
@@ -54,18 +56,50 @@ export function DataTable<TData, TValue>({ columns, data, filter, totalCount }: 
             columnVisibility,
         },
         manualPagination: true,
+        manualFiltering: true,
     })
+
     const handlePagination = (newPage: number, newLimit: number) => {
         navigate(`?page=${newPage}&limit=${newLimit}`);
     }
+
+    const handleFilter = (e: any) => {
+        setFiltervalue(e.target.value)
+    }
+
+    const debounceData = UseDebounce(filtervalue)
+    useEffect(() => {
+        setSearchParams(prev => {
+            const newParams = new URLSearchParams(prev);
+            if (debounceData) {
+                newParams.set("search", debounceData);
+            } else {
+                newParams.delete("search");
+            }
+            return newParams;
+        });
+    }, [debounceData, setSearchParams]);
+
+    // useEffect(() => {
+    //     setSearchParams(prev => {
+    //         const newParams = new URLSearchParams(prev);
+    //         if (debounceData) {
+    //             newParams.set("search", debounceData);
+    //             navigate(`?${newParams.toString()}`);
+    //         } else {
+    //             newParams.delete("search");
+    //         }
+    //         return newParams;
+    //     });
+    // }, [debounceData, setSearchParams]);
 
     return (
         <div className="bg-white rounded-md p-3 my-2">
             <div className="flex items-center py-4">
                 <Input
                     placeholder={`Filter ${filter}...`}
-                    value={filter && ((table.getColumn(filter)?.getFilterValue() as string) ?? "")}
-                    onChange={(event) => { table.getColumn(filter)?.setFilterValue(event.target.value) }}
+                    value={filtervalue}
+                    onChange={(e) => { handleFilter(e) }}
                     className="max-w-sm"
                 />
                 <DropdownMenu>

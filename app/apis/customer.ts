@@ -15,10 +15,26 @@ export const addCustomer = async (customer: Customer) => {
 //   return { customers };
 // };
 
-export const fetchCustomers = async (page: number, limit: number) => {
-  const { data: customers, count: totalCount } = await supabase
+// export const fetchCustomers = async (page: number, limit: number) => {
+//   const { data: customers, count: totalCount } = await supabase
+//     .from("customers")
+//     .select("*", { count: "exact" })
+//     .range(page * limit, (page + 1) * limit - 1);
+//   return { customers, totalCount };
+// };
+
+export const fetchCustomers = async (
+  page: number,
+  limit: number,
+  search: string
+) => {
+  let query = supabase
     .from("customers")
     .select("*", { count: "exact" })
     .range(page * limit, (page + 1) * limit - 1);
+  if (search) {
+    query = query.ilike("name", `%${search}%`);
+  }
+  const { data: customers, count: totalCount } = await query;
   return { customers, totalCount };
 };

@@ -17,6 +17,10 @@ export const meta: MetaFunction = () => {
 };
 
 export const loader: LoaderFunction = async ({ request }) => {
+    const searchParams = new URL(request.url).searchParams;
+    const { category } = Object.fromEntries(searchParams.entries())
+    console.log(category, 'sea');
+
     const { supabaseClient } = createSupabaseServerClient(request)
     const {
         data: { user },
@@ -36,9 +40,7 @@ export const action: ActionFunction = async ({ request }: ActionFunctionArgs) =>
     const categories = await fetchQuantityById(categoryId);
     const quantity = categories.categories?.[0]?.quantity;
     await updateQuantity(categoryId, quantity - 1)
-
     await deleteProduct(id, categoryId)
-
     return null;
 }
 

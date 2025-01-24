@@ -16,13 +16,16 @@ export const meta: MetaFunction = () => {
 
 export const loader: LoaderFunction = async ({ request }: LoaderFunctionArgs) => {
     const searchParams = new URL(request.url).searchParams;
-    const { page, limit } = Object.fromEntries(searchParams.entries());
-    const data = await fetchCategories(Number(page) || 0, Number(limit) || 5);
+    const { page, limit, search } = Object.fromEntries(searchParams.entries());
+    const data = await fetchCategories(Number(page) || 0, Number(limit) || 5, search);
     return data;
 }
 
-export function shouldRevalidate({ defaultShouldRevalidate }: ShouldRevalidateFunctionArgs) {
-    return false
+export function shouldRevalidate({ defaultShouldRevalidate, currentParams }: ShouldRevalidateFunctionArgs) {
+    if ('id' in currentParams && currentParams.id) {
+        return false;
+    };
+    return defaultShouldRevalidate;
 }
 
 export default function Categories() {
@@ -33,7 +36,7 @@ export default function Categories() {
             accessorKey: "category",
             header: "Category",
             cell: ({ row }) => {
-                return <Link to={`${row?.original?.id}`} className="cursor-pointer underline text-blue-500">{row?.getValue('category')}</Link>
+                return <Link to={`/dashboard/products/?category=${row.original.id}`} className="cursor-pointer underline text-blue-500">{row?.getValue('category')}</Link>
             },
         },
         {
