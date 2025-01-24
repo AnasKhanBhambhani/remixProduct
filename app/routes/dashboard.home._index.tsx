@@ -42,7 +42,7 @@ export default function Dashboard() {
                     </div>
                     <div className="flex flex-col">
                         <p>Total Products</p>
-                        <h1 className="text-3xl">{data?.data?.length || 0}</h1>
+                        <h1 className="text-3xl">{data.allProducts?.length || 0}</h1>
                     </div>
                 </Card>
                 <Card className="flex  py-6  gap-3 justify-evenly  w-72 cursor-pointer hover:shadow-lg">

@@ -24,8 +24,6 @@ const ComboboxDemo: React.FC<CategoryName> = ({ categories }) => {
     const [open, setOpen] = React.useState(false)
     const [value, setValue] = React.useState("")
     const [id, setId] = React.useState("")
-
-
     return (
         <>
             <Popover open={open} onOpenChange={setOpen}>

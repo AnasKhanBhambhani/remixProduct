@@ -51,7 +51,9 @@ export const action: ActionFunction = async ({ request }: ActionFunctionArgs) =>
     if (!file || typeof file === "string") {
         return json({ error: "File upload failed" }, { status: 400 });
     }
+
     try {
+        //file 
         const img = file as File;
         const fileBuffer = await img.arrayBuffer();
         const fileUpload = `${Date.now()}-${img.name}`
@@ -61,7 +63,6 @@ export const action: ActionFunction = async ({ request }: ActionFunctionArgs) =>
                 contentType: file.type,
                 upsert: false,
             });
-
         if (uploadError) {
             throw new Error(`File upload failed: ${uploadError.message}`);
         }

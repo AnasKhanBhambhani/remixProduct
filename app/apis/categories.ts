@@ -47,12 +47,20 @@ export const fetchQuantityById = async (id: FormDataEntryValue | null) => {
     .eq("id", id);
   return { categories, error };
 };
+
 export const fetchCategoriesName = async () => {
-  let { data: categories, error } = await supabase
+  const { data: categories, error } = await supabase
     .from("categories")
     .select("category");
   return { categories, error };
 };
+// export const fetchCategoryNameById = async (id: string) => {
+//   const { data: categoryName, error } = await supabase
+//     .from("categories")
+//     .select("category")
+//     .eq("id", id);
+//   return { categoryName, error };
+// };
 
 export const insertCategory = async (category: FormDataEntryValue | null) => {
   const { data, error } = await supabase

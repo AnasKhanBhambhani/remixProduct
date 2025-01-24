@@ -6,8 +6,9 @@ import { Button } from "../components/ui/button";
 import { Input } from "~/components/ui/input";
 import { z } from "zod";
 import { createSupabaseServerClient } from "supabase.server";
-import { fetchQuantityById, updateQuantity } from "~/apis/categories";
+import { fetchCategoriesList, fetchQuantityById, updateQuantity } from "~/apis/categories";
 import { Pencil, Trash2 } from "lucide-react";
+import ComboboxDemo from "~/components/combobox";
 
 export const meta: MetaFunction = () => {
     return [
@@ -19,16 +20,19 @@ export const meta: MetaFunction = () => {
 export const loader: LoaderFunction = async ({ request }) => {
     const searchParams = new URL(request.url).searchParams;
     const { category } = Object.fromEntries(searchParams.entries())
-    console.log(category, 'sea');
+    console.log(category, 'category');
 
     const { supabaseClient } = createSupabaseServerClient(request)
     const {
         data: { user },
     } = await supabaseClient.auth.getUser()
-    const data = await fetchProducts();
 
+    const categoryList = await fetchCategoriesList();
+    const { allProducts } = await fetchProducts(category);
     const newData = {
-        ...data,
+        allProducts,
+        categoryList,
+        category,
     };
     return json(newData);
 };
@@ -37,6 +41,8 @@ export const action: ActionFunction = async ({ request }: ActionFunctionArgs) =>
     const formData = await request.formData();
     const id = z.string().parse(formData.get('id'));
     const categoryId = z.string().parse(formData.get('categoryId'));
+    const categoryList = formData.get("category");
+    console.log(categoryList, 'categoryList');
     const categories = await fetchQuantityById(categoryId);
     const quantity = categories.categories?.[0]?.quantity;
     await updateQuantity(categoryId, quantity - 1)
@@ -46,21 +52,31 @@ export const action: ActionFunction = async ({ request }: ActionFunctionArgs) =>
 
 export default function Product() {
     const navigate = useNavigate();
-    const data = useLoaderData<typeof loader>();
+    const { allProducts, category, categoryList } = useLoaderData<typeof loader>();
+    let categoryNameById = categoryList?.categories.find((item: any) => item.id == category)
+    // console.log(categoryNameById.category, 'categoryListcategoryListcategoryList');
     const handleEdits = (item: Products) => {
         navigate(`./edit/${item.id}`);
     };
     return (
         <div className="py-5 h-full max-w-[1500px] mx-auto">
             <Outlet />
-            <div className="grid grid-cols-2  justify-center items-center px-10">
-                <h1 className=" text-3xl my-10 ">Your Products</h1>
-                <div className=" text-end">
-                    <Button onClick={() => navigate('/dashboard/products/productcontrol')}>Add products</Button>
+            <div className="my-5">
+                <h1 className=" text-3xl px-10">{categoryNameById ? categoryNameById.category : 'All Products'} </h1>
+            </div>
+            <div className="grid grid-cols-2 my-10  justify-center items-center px-10">
+                <div className=" grid grid-cols-2 gap-4">
+                    <Input placeholder="Filter Price" className="bg-white" />
+                    <ComboboxDemo categories={categoryList.categories} />
+                    {/* <Input placeholder="Filter category" className="bg-white" /> */}
+                </div>
+
+                <div className=" text-end ">
+                    <Button onClick={() => navigate('/dashboard/products/productcontrol')}>Add Products</Button>
                 </div>
             </div>
             <div className="flex flex-wrap  p-1 gap-7 justify-center">
-                {data?.data.map((item: Products) => (
+                {allProducts?.map((item: Products) => (
                     <div
                         key={item.id}
                         className="relative my-2 flex w-72 justify-between flex-col rounded-xl bg-gradient-to-br from-white to-gray-50 bg-clip-border text-gray-700 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"

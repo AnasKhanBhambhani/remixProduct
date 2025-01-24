@@ -2,7 +2,7 @@ import { redirect, useActionData } from "@remix-run/react";
 import { ActionFunction, ActionFunctionArgs, json } from '@remix-run/node'
 import { createSupabaseServerClient } from "supabase.server";
 import { z } from "zod";
-import Authenticated_signupform from "~/components/signupForm";
+import SignUp from "~/components/signupForm";
 import { signUpSchema } from "~/Validations/signupValidation";
 import { MetaFunction } from "@remix-run/node";
 
@@ -54,7 +54,7 @@ export default function LoginPage() {
     return (
         <div className="bg-gradient-to-r from-indigo-500 from-10% via-sky-500 via-30% to-emerald-500 to-90% w-full flex min-h-svh flex-col  items-center justify-center bg-muted p-6 md:p-10">
             <div className="w-full max-w-sm md:max-w-3xl">
-                {<Authenticated_signupform message={actionData ?? actionData?.errors} />}
+                {<SignUp message={actionData ?? actionData?.errors} />}
             </div>
         </div>
 

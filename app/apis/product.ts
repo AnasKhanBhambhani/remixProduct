@@ -1,12 +1,25 @@
 import { supabase } from "supabase.server";
 import { Data, Products, UpdatedProduct } from "~/types/product";
 
-export const fetchProducts = async () => {
-  let { data, error } = await supabase
+// export const fetchProducts = async () => {
+//   let { data, error } = await supabase
+//     .from("ProductsDetail")
+//     .select("*")
+//     .order("id", { ascending: true });
+
+//   return { data, error };
+// };
+
+export const fetchProducts = async (category?: string) => {
+  let products = supabase
     .from("ProductsDetail")
     .select("*")
     .order("id", { ascending: true });
-  return { data, error };
+  if (category) {
+    products = products.eq("category_id", category);
+  }
+  const { data: allProducts, error } = await products;
+  return { allProducts, error };
 };
 
 export const fetchProductById = async (id: string) => {
