@@ -9,7 +9,7 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from "../components/ui/sidebar"
-import { CalendarArrowDown, ChartBarStacked, Home, Inbox, LayoutDashboard, LogOut, PersonStanding, ShoppingCart } from "lucide-react"
+import { ChartBarStacked, LayoutDashboard, LogOut, PersonStanding, ShoppingCart } from "lucide-react"
 
 const items = [
     {
@@ -31,11 +31,6 @@ const items = [
         title: "Customers",
         url: "customerslist",
         icon: PersonStanding,
-    },
-    {
-        title: "Orders",
-        url: "orders",
-        icon: CalendarArrowDown,
     },
     {
         title: "Log Out",

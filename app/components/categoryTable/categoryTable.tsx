@@ -80,19 +80,6 @@ export function DataTable<TData, TValue>({ columns, data, filter, totalCount }: 
         });
     }, [debounceData, setSearchParams]);
 
-    // useEffect(() => {
-    //     setSearchParams(prev => {
-    //         const newParams = new URLSearchParams(prev);
-    //         if (debounceData) {
-    //             newParams.set("search", debounceData);
-    //             navigate(`?${newParams.toString()}`);
-    //         } else {
-    //             newParams.delete("search");
-    //         }
-    //         return newParams;
-    //     });
-    // }, [debounceData, setSearchParams]);
-
     return (
         <div className="bg-white rounded-md p-3 my-2">
             <div className="flex items-center py-4">

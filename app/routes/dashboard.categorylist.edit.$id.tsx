@@ -11,7 +11,7 @@ import { Form, json, redirect, useLoaderData, useNavigate } from "@remix-run/rea
 import { useState } from "react";
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
-import { fetchCategoryById, updateCategoryName } from "~/apis/categories";
+import { fetchCategoryOrQuantityById, updateCategory } from "~/apis/categories";
 
 export const meta: MetaFunction = () => {
     return [
@@ -22,23 +22,26 @@ export const meta: MetaFunction = () => {
 
 export const loader: LoaderFunction = async ({ params }) => {
     invariant(params.id, "Id must be present")
-    const { categories } = await fetchCategoryById(params.id)
-    return json(categories?.[0].category);
+    const categories = await fetchCategoryOrQuantityById(params.id);
+
+    return json(categories);
+
 }
 
 export const action: ActionFunction = async ({ request, params }) => {
     invariant(params.id, "Id must be present")
     const formData = await request.formData();
-    const categoryName = formData.get('category');
+    const category = formData.get('category');
+    const updateData = { category }
     const categoryId = params.id;
-    await updateCategoryName(categoryId, categoryName)
+    await updateCategory(categoryId, updateData)
     return redirect('/dashboard/categorylist')
 }
 
 
 export default function CategoryEdit() {
-    const data = useLoaderData<typeof loader>();
-    const [categoryName, setCategoryName] = useState(data);
+    const categories = useLoaderData<typeof loader>();
+    const [categoryName, setCategoryName] = useState(categories?.category);
     const navigate = useNavigate()
     const [toggle, setToggle] = useState(true)
     const handleClose = () => {

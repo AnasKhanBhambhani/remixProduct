@@ -16,9 +16,6 @@ import {
     PopoverTrigger,
 } from "../components/ui/popover"
 import { CategoryName } from "~/types/categories"
-import { Input } from "./ui/input"
-
-
 
 const ComboboxDemo: React.FC<CategoryName> = ({ categories }) => {
     const [open, setOpen] = React.useState(false)

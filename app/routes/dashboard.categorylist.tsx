@@ -21,13 +21,6 @@ export const loader: LoaderFunction = async ({ request }: LoaderFunctionArgs) =>
     return data;
 }
 
-// export function shouldRevalidate({ defaultShouldRevalidate, currentParams }: ShouldRevalidateFunctionArgs) {
-//     if ('id' in currentParams && currentParams.id) {
-//         return false;
-//     };
-//     return defaultShouldRevalidate;
-// }
-
 export default function Categories() {
     const navigate = useNavigate();
     const categories = useLoaderData<typeof loader>();

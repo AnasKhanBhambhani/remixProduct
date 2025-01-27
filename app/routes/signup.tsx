@@ -49,7 +49,7 @@ export const action: ActionFunction = async ({ request }: ActionFunctionArgs) =>
 
 }
 
-export default function LoginPage() {
+export default function SignUpPage() {
     const actionData = useActionData<typeof action>();
     return (
         <div className="bg-gradient-to-r from-indigo-500 from-10% via-sky-500 via-30% to-emerald-500 to-90% w-full flex min-h-svh flex-col  items-center justify-center bg-muted p-6 md:p-10">

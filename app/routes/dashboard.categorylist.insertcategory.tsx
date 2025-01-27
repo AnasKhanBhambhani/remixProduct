@@ -1,7 +1,7 @@
 import type { ActionFunction, ActionFunctionArgs, MetaFunction } from "@remix-run/node";
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
-import { Form, redirect, useActionData, useNavigate } from "@remix-run/react";
+import { Form, redirect, useNavigate } from "@remix-run/react";
 import { insertCategory } from "~/apis/categories";
 import {
     Dialog,
@@ -19,11 +19,9 @@ export const meta: MetaFunction = () => {
     ];
 };
 
-
-
 export const action: ActionFunction = async ({ request }: ActionFunctionArgs) => {
     const formData = await request.formData();
-    const category = formData.get('category');
+    const category = formData.get('category') as string;
     await insertCategory(category);
     return redirect('/dashboard/categorylist');
 };

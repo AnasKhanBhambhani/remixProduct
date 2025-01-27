@@ -1,4 +1,5 @@
 import { supabase } from "supabase.server";
+import { UpdataCategory } from "~/types/categories";
 
 export const fetchCategoriesList = async () => {
   let { data: categories, error } = await supabase
@@ -6,18 +7,7 @@ export const fetchCategoriesList = async () => {
     .select("*");
   return { categories, error };
 };
-// export const fetchCategories = async (page: number, limit: number) => {
-//   const {
-//     data: categories,
-//     error,
-//     count,
-//   } = await supabase
-//     .from("categories")
-//     .select("*", { count: "exact" })
-//     .ilike("category", "")
-//     .range(page * limit, (page + 1) * limit - 1);
-//   return { categories, error, totalCount: count };
-// };
+
 export const fetchCategories = async (
   page: number,
   limit: number,
@@ -33,19 +23,14 @@ export const fetchCategories = async (
   const { data: categories, error, count: totalCount } = await query;
   return { categories, error, totalCount };
 };
-export const fetchCategoryById = async (id: FormDataEntryValue | null) => {
-  let { data: categories, error } = await supabase
+
+export const fetchCategoryOrQuantityById = async (id: string) => {
+  let { data } = await supabase
     .from("categories")
-    .select("category")
-    .eq("id", id);
-  return { categories, error };
-};
-export const fetchQuantityById = async (id: FormDataEntryValue | null) => {
-  let { data: categories, error } = await supabase
-    .from("categories")
-    .select("quantity")
-    .eq("id", id);
-  return { categories, error };
+    .select("*")
+    .eq("id", id)
+    .single();
+  return data;
 };
 
 export const fetchCategoriesName = async () => {
@@ -54,46 +39,30 @@ export const fetchCategoriesName = async () => {
     .select("category");
   return { categories, error };
 };
-// export const fetchCategoryNameById = async (id: string) => {
-//   const { data: categoryName, error } = await supabase
-//     .from("categories")
-//     .select("category")
-//     .eq("id", id);
-//   return { categoryName, error };
-// };
 
-export const insertCategory = async (category: FormDataEntryValue | null) => {
-  const { data, error } = await supabase
-    .from("categories")
-    .insert({ category: category })
-    .select();
+export const insertCategory = async (category?: string) => {
+  await supabase.from("categories").insert({ category: category }).select();
   return category;
 };
 
-export const updateQuantity = async (
-  categoryId: FormDataEntryValue | null,
-  quantity: number
+export const updateCategory = async (
+  categoryId: string,
+  updateData: UpdataCategory
 ) => {
   const { data, error } = await supabase
     .from("categories")
-    .update({ quantity: quantity })
-    .eq("id", categoryId)
-    .select();
-};
-
-export const updateCategoryName = async (
-  categoryId: string,
-  categoryName: FormDataEntryValue | null
-) => {
-  await supabase
-    .from("categories")
-    .update({ category: categoryName })
+    .update(updateData)
     .eq("id", categoryId)
     .order("category", { ascending: true })
     .select();
+  if (error) {
+    console.error("Error updating category:", error);
+    return null;
+  }
+  return data;
 };
 
-export const DeleteQuantity = async (categoryId: FormDataEntryValue | null) => {
+export const deleteQuantity = async (categoryId?: string) => {
   await supabase.from("ProductsDetail").delete().eq("category_id", categoryId);
   await supabase.from("categories").delete().eq("id", categoryId);
 };

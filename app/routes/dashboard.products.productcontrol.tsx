@@ -5,7 +5,7 @@ import { Form, json, redirect, useActionData, useLoaderData, useNavigate } from 
 import { productSchema } from "~/Validations/productValidation";
 import { supabase } from "supabase.server";
 import ComboboxDemo from "../components/combobox";
-import { fetchCategoriesList, fetchCategoriesName, fetchQuantityById, updateQuantity } from "~/apis/categories";
+import { fetchCategoriesList, fetchCategoryOrQuantityById, updateCategory } from "~/apis/categories";
 import { z } from "zod";
 import {
     Dialog,
@@ -15,6 +15,8 @@ import {
     DialogTitle,
 } from "../components/ui/dialog"
 import { useState } from "react";
+import { getImageUrl, storeProductImage } from "~/apis/product";
+import Inputs from "~/components/Inputs";
 
 interface actionData {
     errors?: {
@@ -34,7 +36,6 @@ export const meta: MetaFunction = () => {
 };
 
 export const loader: LoaderFunction = async ({ request }: ActionFunctionArgs) => {
-    // const data = await fetchCategoriesName();
     const data = await fetchCategoriesList();
     return data;
 }
@@ -44,40 +45,25 @@ export const action: ActionFunction = async ({ request }: ActionFunctionArgs) =>
     const name = formData.get("name");
     const description = formData.get("description");
     const price = parseInt((formData.get("price")) as string);
-    const file = formData.get("file");
-    const categoryId = formData.get("category");
+    const file = formData.get("file") as File;
+    const categoryId = formData.get("category") as string;
 
 
     if (!file || typeof file === "string") {
         return json({ error: "File upload failed" }, { status: 400 });
     }
-
     try {
-        //file 
-        const img = file as File;
-        const fileBuffer = await img.arrayBuffer();
-        const fileUpload = `${Date.now()}-${img.name}`
-        const { error: uploadError } = await supabase.storage
-            .from('ProductImages')
-            .upload(fileUpload, new Uint8Array(fileBuffer), {
-                contentType: file.type,
-                upsert: false,
-            });
-        if (uploadError) {
-            throw new Error(`File upload failed: ${uploadError.message}`);
-        }
-        const { data: fileName } = await supabase.storage
-            .from('ProductImages')
-            .getPublicUrl(fileUpload);
-        const ProductImage = await fileName.publicUrl;
+        const ProductImage = await getImageUrl(file)
         const validatedData = productSchema.parse({ name, description, price, category_id: categoryId })
         const { data, error: insertError } = await supabase
             .from('ProductsDetail')
             .insert([{ ...validatedData, ProductImage }]);
-
-        const categories = await fetchQuantityById(categoryId);
-        const quantity = categories.categories?.[0]?.quantity;
-        await updateQuantity(categoryId, quantity + 1)
+        const categories = await fetchCategoryOrQuantityById(categoryId);
+        const quantity = categories?.quantity;
+        const updateData = {
+            quantity: quantity + 1
+        }
+        await updateCategory(categoryId, updateData)
 
         if (insertError) {
             throw new Error("Failed to post data");
@@ -98,6 +84,8 @@ export default function ProductControl() {
         setToggle(false)
     }
     const result = useActionData<actionData>();
+    console.log(result?.errors?.name?.[0]);
+
     const { categories } = useLoaderData<typeof loader>();
 
     return (
@@ -110,27 +98,14 @@ export default function ProductControl() {
                     </DialogDescription>
                 </DialogHeader>
                 <Form className="flex justify-center " method="post" encType="multipart/form-data">
-                    <div className="grid grid-cols-1 gap-5  rounded-lg p-32">
-                        <Input type="text" name="name" id="name" placeholder="Enter Product Name" />
-                        {result?.errors?.name && (
-                            <p className="text-red-500 text-xs -mt-4">
-                                {result.errors.name}
-                            </p>
-                        )}
-                        <Input type="text" name="description" id="description" placeholder="Enter Product Description" />
-                        {result?.errors?.description && (
-                            <p className="text-red-500 text-xs">
-                                {result.errors.description}
-                            </p>
-                        )}
-                        <Input type="text" name="price" id="price" placeholder="Enter Product Price" />
-                        {result?.errors?.price && (
-                            <p className="text-red-500 text-xs -mt-4">
-                                {result.errors.price}
-                            </p>
-                        )}
-                        <Input type="file" name="file" id="file" placeholder="Choose Product Image" accept="image/png, image/gif, image/jpeg" required />
-                        <ComboboxDemo categories={categories} />
+                    <div className="grid grid-cols-1  rounded-lg p-32">
+                        <Inputs type="text" name="name" id="name" message={result?.errors?.name?.[0]} placeholder="Enter Product Name" />
+                        <Inputs type="text" name="description" id="description" message={result?.errors?.description?.[0]} placeholder="Enter Product description" />
+                        <Inputs type="text" name="price" id="price" message={result?.errors?.price?.[0]} placeholder="Enter Product price" />
+                        <Inputs type="file" name="file" id="file" placeholder="Choose Product Image" accept="image/png, image/gif, image/jpeg" required={true} />
+                        <div className="my-3">
+                            <ComboboxDemo categories={categories} />
+                        </div>
                         {result?.errors?.category_id && (
                             <p className="text-red-500 text-xs -mt-4">
                                 {result.errors.category_id}

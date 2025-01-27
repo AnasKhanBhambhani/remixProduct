@@ -16,7 +16,6 @@ export const meta: MetaFunction = () => {
 export const loader: LoaderFunction = async ({ request }: LoaderFunctionArgs) => {
     const searchParams = new URL(request.url).searchParams;
     const { page, limit, search } = Object.fromEntries(searchParams.entries());
-    // const data = await fetchCustomers(Number(page) || 0, Number(limit) || 5);
     const data = await fetchCustomers(Number(page) || 0, Number(limit) || 5, search);
     return data;
 }

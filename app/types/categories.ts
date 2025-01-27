@@ -13,3 +13,7 @@ interface Category {
 export interface CategoryName {
   categories: Category[];
 }
+export type UpdataCategory = {
+  quantity?: number | null;
+  category?: FormDataEntryValue | null;
+};

@@ -16,14 +16,14 @@ export const meta: MetaFunction = () => {
 };
 
 export const loader: LoaderFunction = async () => {
-    const data = await fetchProducts();
+    const { allProducts } = await fetchProducts();
     const category = await fetchCategoriesList();
-    return json({ data, category });
+    return json({ allProducts, category });
 }
 
 export default function Dashboard() {
     const user: String = useOutletContext();
-    const { data, category } = useLoaderData<typeof loader>();
+    const { allProducts, category } = useLoaderData<typeof loader>();
     return (
         <div className="py-20 h-full max-w-[1500px] mx-auto">
             <div className="flex justify-between  items-center ">
@@ -42,7 +42,7 @@ export default function Dashboard() {
                     </div>
                     <div className="flex flex-col">
                         <p>Total Products</p>
-                        <h1 className="text-3xl">{data.allProducts?.length || 0}</h1>
+                        <h1 className="text-3xl">{allProducts?.length || 0}</h1>
                     </div>
                 </Card>
                 <Card className="flex  py-6  gap-3 justify-evenly  w-72 cursor-pointer hover:shadow-lg">

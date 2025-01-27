@@ -1,6 +1,7 @@
 import { Form, Link } from "@remix-run/react";
 import { Props } from "~/types";
-
+import Inputs from "./Inputs";
+import Button from "./Button";
 
 const SignUpForm = ({ message }: Props) => {
     return (
@@ -13,52 +14,12 @@ const SignUpForm = ({ message }: Props) => {
                         Product Management System
                     </div>
                     <div className="mt-5">
-                        <label
-                            className="font-semibold text-sm text-gray-600 pb-1 block"
-                            htmlFor="login"
-                        >Name:</label
-                        >
-                        <input
-                            className="border rounded-lg bg-white px-3 py-2 mt-1 text-sm w-full"
-                            id="name"
-                            name="name"
-                            type="name"
-                            required
-                        />
-                        <div className="text-red-500 text-xs mb-5"> {message?.errors?.email || ''}</div>
-
-
-                        <label
-                            className="font-semibold text-sm text-gray-600 pb-1 block"
-                            htmlFor="login"
-                        >E-mail</label
-                        >
-                        <input
-                            className="border rounded-lg bg-white px-3 py-2 mt-1 text-sm w-full"
-                            id="email"
-                            name="email"
-                            type="email"
-                            required
-                        />
-                        <div className="text-red-500 text-xs mb-5"> {message?.errors?.email || ''}</div>
-                        <label
-                            className="font-semibold text-sm text-gray-600 pb-1 block"
-                            htmlFor="password">Password</label>
-                        <input
-                            className="border bg-white rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full"
-                            id="password" name="password" type="password" required
-                        />
-                        <div className="text-red-500 text-xs mb-5"> {message?.errors?.password || ''}</div>
-
+                        <Inputs id="name" name="name" type="name" label='Name' />
+                        <Inputs id="email" name="email" type="email" message={message?.errors?.email} label='Email' />
+                        <Inputs id="password" name="password" type="password" message={message?.errors?.password} label='Password' />
                     </div>
-
                     <div className="mt-5">
-                        <button
-                            className="py-2 px-4 bg-blue-600 hover:bg-blue-700 focus:ring-blue-500 focus:ring-offset-blue-200 text-white w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg"
-                            type="submit"
-                        >
-                            Create your Account
-                        </button>
+                        <Button name="action" value='SignUp' label="Create Your Account" />
                     </div>
                     <div className="flex items-center justify-between mt-4">
                         <span className="w-1/5 border-b dark:border-gray-600 md:w-1/4"></span>

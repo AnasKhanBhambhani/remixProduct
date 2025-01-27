@@ -1,5 +1,3 @@
-/* eslint-disable jsx-a11y/img-redundant-alt */
-/* eslint-disable react/jsx-no-comment-textnodes */
 import { cn } from "../../lib/utils"
 import { Button } from "./button"
 import { Card, CardContent } from "./card"
