@@ -18,12 +18,9 @@ export const fetchProducts = async (
     products = products.lte("price", max).gte("price", min);
   }
   if (search) {
-    console.log("searching working");
     products = products.ilike("name", `%${search}%`);
   }
   const { data: allProducts, error } = await products;
-  console.log(allProducts, "eeeeee");
-
   return { allProducts, error };
 };
 

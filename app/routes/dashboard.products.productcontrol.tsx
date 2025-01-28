@@ -14,7 +14,7 @@ import {
     DialogTitle,
 } from "../components/ui/dialog"
 import { useState } from "react";
-import { getImageUrl, storeProductImage } from "~/apis/product";
+import { getImageUrl } from "~/apis/product";
 import Inputs from "~/components/input";
 
 interface actionData {
@@ -92,8 +92,8 @@ export default function ProductControl() {
                         Make changes to your profile here. Click save when you are done.
                     </DialogDescription>
                 </DialogHeader>
-                <Form className="flex justify-center " method="post" encType="multipart/form-data">
-                    <div className="grid grid-cols-1  rounded-lg p-32">
+                <Form method="post" encType="multipart/form-data">
+                    <div className="grid grid-cols-1 rounded-lg py-10">
                         <Inputs type="text" name="name" id="name" message={result?.errors?.name?.[0]} placeholder="Enter Product Name" />
                         <Inputs type="text" name="description" id="description" message={result?.errors?.description?.[0]} placeholder="Enter Product description" />
                         <Inputs type="text" name="price" id="price" message={result?.errors?.price?.[0]} placeholder="Enter Product price" />

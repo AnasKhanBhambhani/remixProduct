@@ -24,12 +24,12 @@ export const loader: LoaderFunction = async ({ request }) => {
     const { supabaseClient } = createSupabaseServerClient(request)
     await supabaseClient.auth.getUser()
     const categoryList = await fetchCategoriesList();
-    const { allProducts } = await fetchProducts(category, min, max, search);
-    console.log(allProducts);
+    const { allProducts, error } = await fetchProducts(category, min, max, search);
     const newData = {
         allProducts,
         categoryList,
         category,
+        error,
     };
     return json(newData);
 };
@@ -50,13 +50,12 @@ export const action: ActionFunction = async ({ request }: ActionFunctionArgs) =>
 export default function Product() {
     const navigate = useNavigate();
     let [searchParams, setSearchParams] = useSearchParams();
-    console.log(searchParams.get('min'));
     const [serachProduct, setSerachProduct] = useState(searchParams.get('search') || '');
     const [priceRange, setPriceRange] = useState({ min: Number(searchParams.get('min')) || 500, max: Number(searchParams.get('max')) || 10000 });
     const [selectCategory, setSelectCategory] = useState(searchParams.get('category') || '');
-    const { allProducts, category, categoryList } = useLoaderData<typeof loader>();
-    const categoryId = searchParams.get('category')
+    const { allProducts, category, categoryList, error } = useLoaderData<typeof loader>();
     let categoryNameById = categoryList?.categories.find((item: any) => item.id == category)
+
     const handleEdits = (item: Products) => {
         navigate(`./edit/${item.id}`);
     };
@@ -115,8 +114,7 @@ export default function Product() {
                     </div>
                 </div>
             </div>
-
-            <div className="flex flex-col px-10  w-[77vw] bg-gray-200 p-5 rounded-lg mx-auto max-w-[1500px] my-14">
+            <div className="flex flex-col px-10  w-[77vw] bg-blue-100 p-5 rounded-lg mx-auto max-w-[1500px] my-14">
                 <div>
                     <Input
                         placeholder={`Search Products...`}
@@ -143,9 +141,10 @@ export default function Product() {
 
                 </div>
             </div>
-
+            {error && <div className="flex h-[50vh] flex-wrap  p-1 gap-7 justify-center items-center text-3xl">data is not fetched please try again</div>}
             {
-                allProducts?.length == 0 ? <div className="flex h-[50vh] flex-wrap  p-1 gap-7 justify-center items-center text-3xl">No Products Found</div>
+                allProducts?.length == 0 ?
+                    <div className="flex h-[50vh] flex-wrap  p-1 gap-7 justify-center items-center text-3xl">No Products Found</div>
                     :
                     <div className="flex flex-wrap  p-1 gap-7 justify-center">
                         {allProducts?.map((item: Products) => (
