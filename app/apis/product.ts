@@ -24,23 +24,6 @@ export const fetchProductById = async (id: string) => {
   return { data, error };
 };
 
-export const fetchProductByCategoryId = async (
-  page: number,
-  limit: number,
-  id: string
-) => {
-  const {
-    data,
-    error,
-    count: totalCount,
-  } = await supabase
-    .from("ProductsDetail")
-    .select("*", { count: "exact" })
-    .eq("category_id", id)
-    .range(page * limit, (page + 1) * limit - 1);
-  return { data, error, totalCount };
-};
-
 export const updateProduct = async (
   id: string,
   updatedData: UpdatedProduct

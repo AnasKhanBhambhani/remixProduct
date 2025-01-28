@@ -51,7 +51,6 @@ export default function Product() {
     const navigate = useNavigate();
     const [rangePrice, setRangePrice] = useState<string>();
     const [selectCategory, setSelectCategory] = useState('');
-    console.log(selectCategory, 'selectCategory');
     let [searchParams, setSearchParams] = useSearchParams();
     const { allProducts, category, categoryList } = useLoaderData<typeof loader>();
     let categoryNameById = categoryList?.categories.find((item: any) => item.id == category)
@@ -71,19 +70,18 @@ export default function Product() {
             return newParams;
         });
     };
-    // const handleChange = (category: string) => {
-    //     setSelectCategory(category)
-    //     setSearchParams(prev => {
-    //         const newParams = new URLSearchParams(prev);
-    //         if (category) {
-    //             newParams.set("category", category);
-    //         } else {
-    //             newParams.delete("category");
-    //         }
-    //         return newParams;
-    //     });
-    //     console.log(selectCategory, 'selectCategory');
-    // };
+    const handleChange = (category: string) => {
+        setSelectCategory(category)
+        setSearchParams(prev => {
+            const newParams = new URLSearchParams(prev);
+            if (category) {
+                newParams.set("category", category);
+            } else {
+                newParams.delete("category");
+            }
+            return newParams;
+        });
+    };
     return (
         <div className="py-5 h-full max-w-[1500px] mx-auto">
             <Outlet />
@@ -93,11 +91,12 @@ export default function Product() {
             <div className="grid grid-cols-2 my-10  justify-center items-center px-10">
                 <div className=" grid grid-cols-2 gap-4">
                     <Input placeholder="Filter Price" className="bg-white" value={rangePrice} onChange={(e) => handleRange(e.target.value)} />
-                    {/* <select id="myDropdown" className="bg-white" onChange={(e) => { handleChange(e.target.value) }}>
+                    <select id="myDropdown" className="bg-white" onChange={(e) => { handleChange(e.target.value) }}>
+                        <option className="bg-white" value={''} > Select Category</option>
                         {categoryList?.categories.map((item: any) =>
-                            <option className="bg-white" value={item.category} > {item.category}</option>
+                            <option className="bg-white" value={item.id} > {item.category}</option>
                         )}
-                    </select> */}
+                    </select>
                 </div>
                 <div className=" text-end ">
                     <Button onClick={() => navigate('/dashboard/products/productcontrol')}>Add Products</Button>

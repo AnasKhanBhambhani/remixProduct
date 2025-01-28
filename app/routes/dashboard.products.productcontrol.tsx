@@ -84,8 +84,6 @@ export default function ProductControl() {
         setToggle(false)
     }
     const result = useActionData<actionData>();
-    console.log(result?.errors?.name?.[0]);
-
     const { categories } = useLoaderData<typeof loader>();
 
     return (

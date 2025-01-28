@@ -5,8 +5,6 @@ import Button from "./Button";
 import GoogleSvg from "./googleSvg";
 
 const SignupForm = ({ message }: Props) => {
-    console.log(message?.errors?.email);
-
     return (
         <div className="relative py-3 sm:max-w-xl sm:mx-auto">
             <div
