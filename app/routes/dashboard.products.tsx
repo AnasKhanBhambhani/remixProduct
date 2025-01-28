@@ -102,7 +102,7 @@ export default function Product() {
     };
 
     return (
-        <div className="py-5 max-h-[100vh] max-w-[1500px]  mx-auto">
+        <div className="py-5  max-w-[1500px]  mx-auto">
             <Outlet />
             <div className="my-5 flex justify-between px-8 w-[100%]">
                 <div>
@@ -114,7 +114,7 @@ export default function Product() {
                     </div>
                 </div>
             </div>
-            <div className="flex flex-col px-10  w-[77vw] bg-blue-100 p-5 rounded-lg mx-auto max-w-[1500px] my-14">
+            <div className="flex flex-col px-3  w-[77vw] bg-blue-100 py-8 rounded-lg mx-auto max-w-[1500px] my-14">
                 <div>
                     <Input
                         placeholder={`Search Products...`}
