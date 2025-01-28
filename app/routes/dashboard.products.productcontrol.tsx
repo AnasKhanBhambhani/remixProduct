@@ -1,8 +1,7 @@
 import type { ActionFunction, ActionFunctionArgs, LoaderFunction, MetaFunction } from "@remix-run/node";
-import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
 import { Form, json, redirect, useActionData, useLoaderData, useNavigate } from "@remix-run/react";
-import { productSchema } from "~/Validations/productValidation";
+import { productSchema } from "~/validations/productValidation";
 import { supabase } from "supabase.server";
 import ComboboxDemo from "../components/combobox";
 import { fetchCategoriesList, fetchCategoryOrQuantityById, updateCategory } from "~/apis/categories";
@@ -16,7 +15,7 @@ import {
 } from "../components/ui/dialog"
 import { useState } from "react";
 import { getImageUrl, storeProductImage } from "~/apis/product";
-import Inputs from "~/components/Inputs";
+import Inputs from "~/components/input";
 
 interface actionData {
     errors?: {
@@ -47,8 +46,6 @@ export const action: ActionFunction = async ({ request }: ActionFunctionArgs) =>
     const price = parseInt((formData.get("price")) as string);
     const file = formData.get("file") as File;
     const categoryId = formData.get("category") as string;
-
-
     if (!file || typeof file === "string") {
         return json({ error: "File upload failed" }, { status: 400 });
     }
@@ -57,14 +54,14 @@ export const action: ActionFunction = async ({ request }: ActionFunctionArgs) =>
         const validatedData = productSchema.parse({ name, description, price, category_id: categoryId })
         const { data, error: insertError } = await supabase
             .from('ProductsDetail')
-            .insert([{ ...validatedData, ProductImage }]);
+            .insert([{ ...validatedData, ProductImage }])
+            .order("id", { ascending: false })
         const categories = await fetchCategoryOrQuantityById(categoryId);
         const quantity = categories?.quantity;
         const updateData = {
             quantity: quantity + 1
         }
         await updateCategory(categoryId, updateData)
-
         if (insertError) {
             throw new Error("Failed to post data");
         }

@@ -8,7 +8,7 @@ type Input = {
     accept?: string,
     required?: boolean,
 }
-const Inputs = ({ id, name, type, message, label, placeholder, accept, required }: Input) => {
+const Input = ({ id, name, type, message, label, placeholder, accept, required }: Input) => {
     return (
         <>
             <label
@@ -29,4 +29,4 @@ const Inputs = ({ id, name, type, message, label, placeholder, accept, required 
     )
 
 }
-export default Inputs
+export default Input

@@ -16,7 +16,7 @@ import { Button } from "~/components/ui/button";
 import { useState } from "react";
 import { fetchProductById, updateProduct } from "~/apis/product";
 import { Data } from "~/types/product";
-import { productSchema } from "~/Validations/productValidation";
+import { productSchema } from "~/validations/productValidation";
 
 export const meta: MetaFunction = () => {
     return [

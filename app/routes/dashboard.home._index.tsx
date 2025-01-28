@@ -3,10 +3,10 @@ import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
 import { Card } from "../components/ui/card";
 import { AppWindowMac, CircleDollarSign, Weight } from "lucide-react"
-import { ProfitChart } from "../components/ProfitChart";
 import { fetchProducts } from "~/apis/product";
 import { useLoaderData, useOutletContext } from "@remix-run/react";
 import { fetchCategoriesList } from "~/apis/categories";
+import { ProfitChart } from "~/components/ProfitChart";
 
 export const meta: MetaFunction = () => {
     return [

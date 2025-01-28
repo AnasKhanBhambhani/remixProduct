@@ -1,6 +1,6 @@
 import { redirect, type LoaderFunctionArgs } from '@remix-run/node'
 import { createServerClient, parseCookieHeader, serializeCookieHeader } from '@supabase/ssr'
-import { envSchema } from '~/Validations/AuthValidation'
+import { envSchema } from '~/validations/AuthValidation'
 
 export async function loader({ request }: LoaderFunctionArgs) {
     const requestUrl = new URL(request.url)

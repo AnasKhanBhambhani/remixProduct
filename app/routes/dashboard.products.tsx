@@ -20,13 +20,11 @@ export const meta: MetaFunction = () => {
 
 export const loader: LoaderFunction = async ({ request }) => {
     const searchParams = new URL(request.url).searchParams;
-    const { category, min, max } = Object.fromEntries(searchParams.entries())
+    const { category, min, max, search } = Object.fromEntries(searchParams.entries())
     const { supabaseClient } = createSupabaseServerClient(request)
-    const {
-        data: { user },
-    } = await supabaseClient.auth.getUser()
+    await supabaseClient.auth.getUser()
     const categoryList = await fetchCategoriesList();
-    const { allProducts } = await fetchProducts(category, min, max);
+    const { allProducts } = await fetchProducts(category, min, max, search);
     console.log(allProducts);
     const newData = {
         allProducts,
@@ -51,15 +49,19 @@ export const action: ActionFunction = async ({ request }: ActionFunctionArgs) =>
 
 export default function Product() {
     const navigate = useNavigate();
-    const [selectCategory, setSelectCategory] = useState('');
     let [searchParams, setSearchParams] = useSearchParams();
+    console.log(searchParams.get('min'));
+    const [serachProduct, setSerachProduct] = useState(searchParams.get('search') || '');
+    const [priceRange, setPriceRange] = useState({ min: Number(searchParams.get('min')) || 500, max: Number(searchParams.get('max')) || 10000 });
+    const [selectCategory, setSelectCategory] = useState(searchParams.get('category') || '');
     const { allProducts, category, categoryList } = useLoaderData<typeof loader>();
+    const categoryId = searchParams.get('category')
     let categoryNameById = categoryList?.categories.find((item: any) => item.id == category)
     const handleEdits = (item: Products) => {
         navigate(`./edit/${item.id}`);
     };
 
-    const handleChange = (category: string) => {
+    const handleCategory = (category: string) => {
         setSelectCategory(category)
         setSearchParams(prev => {
             const newParams = new URLSearchParams(prev);
@@ -71,9 +73,8 @@ export default function Product() {
             return newParams;
         });
     };
-    const [priceRange, setPriceRange] = useState({ min: 500, max: 10000 });
 
-    const handlePriceChange = (min: number, max: number) => {
+    const handlePrice = (min: number, max: number) => {
         setPriceRange({ min, max });
         setSearchParams(prev => {
             const newParams = new URLSearchParams(prev);
@@ -87,33 +88,59 @@ export default function Product() {
             return newParams;
         });
     };
+
+    const handleSearch = (search: string) => {
+        setSerachProduct(search);
+        setSearchParams(prev => {
+            const newParams = new URLSearchParams(prev);
+            if (search) {
+                newParams.set("search", search);
+            } else {
+                newParams.delete("search");
+            }
+            return newParams;
+        });
+    };
+
     return (
-        <div className="py-5 max-h-[100vh] max-w-[1500px] w-[100vw] mx-auto">
+        <div className="py-5 max-h-[100vh] max-w-[1500px]  mx-auto">
             <Outlet />
-            <div className="my-5">
-                <h1 className=" text-3xl px-10">{categoryNameById ? categoryNameById.category : 'All Products'} </h1>
+            <div className="my-5 flex justify-between px-8 w-[100%]">
+                <div>
+                    <h1 className=" text-3xl">{categoryNameById ? categoryNameById.category : 'All Products'} </h1>
+                </div>
+                <div>
+                    <div className=" text-end ">
+                        <Button onClick={() => navigate('/dashboard/products/productcontrol')}>Add Products</Button>
+                    </div>
+                </div>
             </div>
 
-            <div className="flex justify-between items-center px-10  my-14">
-                <div className="grid grid-cols-2 justify-between items-center gap-7">
-                    <div>
-                        <PriceRangePicker
-                            minPrice={priceRange.min}
-                            maxPrice={priceRange.max}
-                            onChange={handlePriceChange}
-                        />
-                    </div>
+            <div className="flex flex-col px-10  w-[77vw] bg-gray-200 p-5 rounded-lg mx-auto max-w-[1500px] my-14">
+                <div>
+                    <Input
+                        placeholder={`Search Products...`}
+                        className="w-64 bg-white"
+                        value={serachProduct} onChange={(e) => handleSearch(e.target.value)}
+                    />
+                </div>
+                <div className="flex  gap-7">
                     <div className="mt-3">
-                        <select id="myDropdown" className="bg-white w-96 h-8" onChange={(e) => { handleChange(e.target.value) }}>
-                            <option className="bg-white" value={''} > Select Category</option>
+                        <select id="myDropdown" className="bg-white w-64 h-8" defaultValue={selectCategory} onChange={(e) => { handleCategory(e.target.value) }}>
+                            <option className="bg-white" value={''} >Select Category</option>
                             {categoryList?.categories.map((item: any) =>
                                 <option className="bg-white" value={item.id} > {item.category}</option>
                             )}
                         </select>
                     </div>
-                </div>
-                <div className=" text-end ">
-                    <Button onClick={() => navigate('/dashboard/products/productcontrol')}>Add Products</Button>
+                    <div>
+                        <PriceRangePicker
+                            minPrice={priceRange.min}
+                            maxPrice={priceRange.max}
+                            onChange={handlePrice}
+                        />
+                    </div>
+
                 </div>
             </div>
 

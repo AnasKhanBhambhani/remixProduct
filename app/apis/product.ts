@@ -4,19 +4,22 @@ import { UpdatedProduct } from "~/types/product";
 export const fetchProducts = async (
   category?: string,
   min?: string,
-  max?: string
+  max?: string,
+  search?: string
 ) => {
   let products = supabase
     .from("ProductsDetail")
     .select("*")
-    .order("id", { ascending: true });
+    .order("id", { ascending: false });
   if (category) {
     products = products.eq("category_id", category);
   }
   if (min && max) {
-    console.log(min, max);
-
     products = products.lte("price", max).gte("price", min);
+  }
+  if (search) {
+    console.log("searching working");
+    products = products.ilike("name", `%${search}%`);
   }
   const { data: allProducts, error } = await products;
   console.log(allProducts, "eeeeee");

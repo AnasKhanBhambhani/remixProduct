@@ -3,7 +3,7 @@ import { ActionFunction, ActionFunctionArgs, json } from '@remix-run/node'
 import { createSupabaseServerClient } from "supabase.server";
 import { z } from "zod";
 import SignUp from "~/components/signupForm";
-import { signUpSchema } from "~/Validations/signupValidation";
+import { signUpSchema } from "~/validations/signupValidation";
 import { MetaFunction } from "@remix-run/node";
 
 export const meta: MetaFunction = () => {

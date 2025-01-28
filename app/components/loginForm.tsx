@@ -1,10 +1,10 @@
 import { Form, Link } from "@remix-run/react";
 import { Props } from "~/types";
-import Inputs from "./Inputs";
-import Button from "./Button";
+import Inputs from "./input";
+import Button from "./button";
 import GoogleSvg from "./googleSvg";
 
-const SignupForm = ({ message }: Props) => {
+const LoginForm = ({ message }: Props) => {
     return (
         <div className="relative py-3 sm:max-w-xl sm:mx-auto">
             <div
@@ -54,5 +54,5 @@ const SignupForm = ({ message }: Props) => {
     )
 }
 
-export default SignupForm
+export default LoginForm
 

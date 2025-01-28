@@ -47,17 +47,17 @@ const PriceRangePicker: React.FC<PriceRangePickerProps> = ({ minPrice, maxPrice,
                         {...props}
                         style={{
                             ...props.style,
-                            height: '20px',
-                            width: '20px',
+                            height: '10px',
+                            width: '10px',
                             borderRadius: '50%',
                             backgroundColor: '#5469d4',
                         }}
                     />
                 )}
             />
-            <div className='flex justify-between my-1'>
+            <div className='flex justify-between gap-5 my-1'>
                 <span>${values[0]}</span>
-                <h3>Select Price Range</h3>
+                <h3>Price Range</h3>
                 <span>${values[1]}</span>
             </div>
         </div>

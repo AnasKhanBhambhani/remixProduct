@@ -10,7 +10,7 @@ import {
     DialogTitle,
 } from "../components/ui/dialog"
 import { useState } from "react";
-import { customerSchema } from "~/Validations/customerValidation";
+import { customerSchema } from "~/validations/customerValidation";
 import { z, ZodError } from "zod";
 import { addCustomer } from "~/apis/customer";
 
