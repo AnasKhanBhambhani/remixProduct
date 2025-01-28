@@ -9,6 +9,7 @@ import { createSupabaseServerClient } from "supabase.server";
 import { fetchCategoriesList, fetchCategoryOrQuantityById, updateCategory } from "~/apis/categories";
 import { Pencil, Trash2 } from "lucide-react";
 import { useState } from "react";
+import PriceRangePicker from "~/components/rangePicker";
 
 export const meta: MetaFunction = () => {
     return [
@@ -19,13 +20,14 @@ export const meta: MetaFunction = () => {
 
 export const loader: LoaderFunction = async ({ request }) => {
     const searchParams = new URL(request.url).searchParams;
-    const { category, range } = Object.fromEntries(searchParams.entries())
+    const { category, min, max } = Object.fromEntries(searchParams.entries())
     const { supabaseClient } = createSupabaseServerClient(request)
     const {
         data: { user },
     } = await supabaseClient.auth.getUser()
     const categoryList = await fetchCategoriesList();
-    const { allProducts } = await fetchProducts(category, range);
+    const { allProducts } = await fetchProducts(category, min, max);
+    console.log(allProducts);
     const newData = {
         allProducts,
         categoryList,
@@ -49,7 +51,6 @@ export const action: ActionFunction = async ({ request }: ActionFunctionArgs) =>
 
 export default function Product() {
     const navigate = useNavigate();
-    const [rangePrice, setRangePrice] = useState<string>();
     const [selectCategory, setSelectCategory] = useState('');
     let [searchParams, setSearchParams] = useSearchParams();
     const { allProducts, category, categoryList } = useLoaderData<typeof loader>();
@@ -57,19 +58,7 @@ export default function Product() {
     const handleEdits = (item: Products) => {
         navigate(`./edit/${item.id}`);
     };
-    const handleRange = (range: string) => {
-        setRangePrice(range);
 
-        setSearchParams(prev => {
-            const newParams = new URLSearchParams(prev);
-            if (range) {
-                newParams.set("range", range);
-            } else {
-                newParams.delete("range");
-            }
-            return newParams;
-        });
-    };
     const handleChange = (category: string) => {
         setSelectCategory(category)
         setSearchParams(prev => {
@@ -82,26 +71,52 @@ export default function Product() {
             return newParams;
         });
     };
+    const [priceRange, setPriceRange] = useState({ min: 500, max: 10000 });
+
+    const handlePriceChange = (min: number, max: number) => {
+        setPriceRange({ min, max });
+        setSearchParams(prev => {
+            const newParams = new URLSearchParams(prev);
+            if (min && max) {
+                newParams.set("min", String(min));
+                newParams.set("max", String(max));
+            } else {
+                newParams.delete("min");
+                newParams.delete("max");
+            }
+            return newParams;
+        });
+    };
     return (
-        <div className="py-5 h-full max-w-[1500px] mx-auto">
+        <div className="py-5 max-h-[100vh] max-w-[1500px] w-[100vw] mx-auto">
             <Outlet />
             <div className="my-5">
                 <h1 className=" text-3xl px-10">{categoryNameById ? categoryNameById.category : 'All Products'} </h1>
             </div>
-            <div className="grid grid-cols-2 my-10  justify-center items-center px-10">
-                <div className=" grid grid-cols-2 gap-4">
-                    <Input placeholder="Filter Price" className="bg-white" value={rangePrice} onChange={(e) => handleRange(e.target.value)} />
-                    <select id="myDropdown" className="bg-white" onChange={(e) => { handleChange(e.target.value) }}>
-                        <option className="bg-white" value={''} > Select Category</option>
-                        {categoryList?.categories.map((item: any) =>
-                            <option className="bg-white" value={item.id} > {item.category}</option>
-                        )}
-                    </select>
+
+            <div className="flex justify-between items-center px-10  my-14">
+                <div className="grid grid-cols-2 justify-between items-center gap-7">
+                    <div>
+                        <PriceRangePicker
+                            minPrice={priceRange.min}
+                            maxPrice={priceRange.max}
+                            onChange={handlePriceChange}
+                        />
+                    </div>
+                    <div className="mt-3">
+                        <select id="myDropdown" className="bg-white w-96 h-8" onChange={(e) => { handleChange(e.target.value) }}>
+                            <option className="bg-white" value={''} > Select Category</option>
+                            {categoryList?.categories.map((item: any) =>
+                                <option className="bg-white" value={item.id} > {item.category}</option>
+                            )}
+                        </select>
+                    </div>
                 </div>
                 <div className=" text-end ">
                     <Button onClick={() => navigate('/dashboard/products/productcontrol')}>Add Products</Button>
                 </div>
             </div>
+
             {
                 allProducts?.length == 0 ? <div className="flex h-[50vh] flex-wrap  p-1 gap-7 justify-center items-center text-3xl">No Products Found</div>
                     :

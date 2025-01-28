@@ -1,7 +1,11 @@
 import { supabase } from "supabase.server";
 import { UpdatedProduct } from "~/types/product";
 
-export const fetchProducts = async (category?: string, lessthen?: string) => {
+export const fetchProducts = async (
+  category?: string,
+  min?: string,
+  max?: string
+) => {
   let products = supabase
     .from("ProductsDetail")
     .select("*")
@@ -9,10 +13,14 @@ export const fetchProducts = async (category?: string, lessthen?: string) => {
   if (category) {
     products = products.eq("category_id", category);
   }
-  if (lessthen) {
-    products = products.lte("price", lessthen);
+  if (min && max) {
+    console.log(min, max);
+
+    products = products.lte("price", max).gte("price", min);
   }
   const { data: allProducts, error } = await products;
+  console.log(allProducts, "eeeeee");
+
   return { allProducts, error };
 };
 
