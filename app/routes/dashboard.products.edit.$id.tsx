@@ -15,13 +15,13 @@ import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
 import { useState } from "react";
 import { fetchProductById, updateProduct } from "~/apis/product";
-import { Data, Products } from "~/types/product";
+import { Data } from "~/types/product";
 import { productSchema } from "~/Validations/productValidation";
 
 export const meta: MetaFunction = () => {
     return [
-        { title: "New Remix App" },
-        { name: "description", content: "Welcome to Remix!" },
+        { title: "Edit Products" },
+        { name: "description", content: "Edit Your Product | Product Management System" },
     ];
 };
 

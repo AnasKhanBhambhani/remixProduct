@@ -1,4 +1,4 @@
-import { useNavigate } from "@remix-run/react"
+import { Link, useNavigate } from "@remix-run/react"
 import {
     Sidebar,
     SidebarContent,
@@ -9,26 +9,28 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from "../components/ui/sidebar"
-import { Home, Inbox, LogOut, Search } from "lucide-react"
-interface AppSidebarProps {
-    status: string;
-}
+import { ChartBarStacked, LayoutDashboard, LogOut, PersonStanding, ShoppingCart } from "lucide-react"
+
 const items = [
     {
         title: "Dashboard",
         url: "home",
-        icon: Home,
+        icon: LayoutDashboard,
     },
     {
         title: "Products",
         url: "products",
-        icon: Inbox,
+        icon: ShoppingCart,
     },
     {
-        title: "Control Products",
-        url: "productcontrol",
-        icon: Search,
-        adminOnly: true,
+        title: "Categories",
+        url: "categorylist",
+        icon: ChartBarStacked,
+    },
+    {
+        title: "Customers",
+        url: "customerslist",
+        icon: PersonStanding,
     },
     {
         title: "Log Out",
@@ -37,10 +39,7 @@ const items = [
     },
 ]
 
-export function AppSidebar({ status }: AppSidebarProps) {
-    const filteredItems = items.filter(
-        (item) => !item.adminOnly || status === "admin"
-    );
+export function AppSidebar() {
     const navigate = useNavigate();
     const handleLogout = async () => {
         try {
@@ -55,13 +54,13 @@ export function AppSidebar({ status }: AppSidebarProps) {
         }
     }
     return (
-        <Sidebar>
+        <Sidebar className="bg-white">
             <SidebarContent>
                 <SidebarGroup>
-                    <SidebarGroupLabel>{status === 'admin' ? 'Welcome Admin' : 'Welcome User'}</SidebarGroupLabel>
+                    <SidebarGroupLabel>Dashboard</SidebarGroupLabel>
                     <SidebarGroupContent>
                         <SidebarMenu>
-                            {filteredItems.map((item) => (
+                            {items.map((item) => (
                                 <SidebarMenuItem key={item.title}>
                                     {item.title == 'Log Out' ? <SidebarMenuButton onClick={handleLogout} asChild>
                                         <div className="cursor-pointer">
@@ -69,10 +68,10 @@ export function AppSidebar({ status }: AppSidebarProps) {
                                             <span>{item.title}</span>
                                         </div>
                                     </SidebarMenuButton> : <SidebarMenuButton asChild>
-                                        <a href={item.url}>
+                                        <Link to={item.url}>
                                             <item.icon />
                                             <span>{item.title}</span>
-                                        </a>
+                                        </Link>
                                     </SidebarMenuButton>}
                                 </SidebarMenuItem>
                             ))}
