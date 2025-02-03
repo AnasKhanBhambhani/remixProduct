@@ -16,7 +16,7 @@ import { Button } from "~/components/ui/button";
 import { useState } from "react";
 import { fetchProductById, updateProduct } from "~/apis/product";
 import { Data } from "~/types/product";
-import { productSchema } from "~/Validations/productValidation";
+import { productSchema } from "~/validations/productValidation";
 
 export const meta: MetaFunction = () => {
     return [
@@ -36,7 +36,7 @@ export const action: ActionFunction = async ({ params, request }) => {
     const formData = await request.formData();
     const UpdatedData = Object.fromEntries(formData)
     const validatedData = productSchema.parse(UpdatedData)
-    await updateProduct(params.id, validatedData)
+    await updateProduct(String(params.id), validatedData)
     return redirect('/dashboard');
 }
 
@@ -90,6 +90,15 @@ export default function Product() {
                                     id="price"
                                     name="price"
                                     defaultValue={data[0]?.price || ''}
+                                    className="col-span-3"
+                                />
+                            </div>
+                            <div className="grid grid-cols-4 items-center gap-4">
+                                <Input
+                                    type="hidden"
+                                    id="category_id"
+                                    name="category_id"
+                                    defaultValue={data[0]?.category_id || ''}
                                     className="col-span-3"
                                 />
                             </div>

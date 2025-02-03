@@ -24,3 +24,8 @@ export const fetchCustomers = async (
   const { data: customers, count: totalCount } = await query;
   return { customers, totalCount };
 };
+
+export const deleteCustomer = async (id: FormDataEntryValue | string) => {
+  const { error } = await supabase.from("customers").delete().eq("id", id);
+  return { error };
+};

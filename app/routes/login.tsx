@@ -2,8 +2,8 @@ import { redirect, useActionData } from "@remix-run/react";
 import { ActionFunction, ActionFunctionArgs, json, MetaFunction } from '@remix-run/node'
 import { createSupabaseServerClient } from "supabase.server";
 import { z } from "zod";
-import { authSchema } from "~/Validations/AuthValidation";
-import AuthForm from "~/components/Loginform";
+import { authSchema } from "~/validations/AuthValidation";
+import AuthForm from "~/components/loginForm";
 
 export const meta: MetaFunction = () => {
     return [

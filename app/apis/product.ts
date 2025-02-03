@@ -1,16 +1,24 @@
 import { supabase } from "supabase.server";
 import { UpdatedProduct } from "~/types/product";
 
-export const fetchProducts = async (category?: string, lessthen?: string) => {
+export const fetchProducts = async (
+  category?: string,
+  min?: string,
+  max?: string,
+  search?: string
+) => {
   let products = supabase
     .from("ProductsDetail")
     .select("*")
-    .order("id", { ascending: true });
+    .order("id", { ascending: false });
   if (category) {
     products = products.eq("category_id", category);
   }
-  if (lessthen) {
-    products = products.lte("price", lessthen);
+  if (min && max) {
+    products = products.lte("price", max).gte("price", min);
+  }
+  if (search) {
+    products = products.ilike("name", `%${search}%`);
   }
   const { data: allProducts, error } = await products;
   return { allProducts, error };

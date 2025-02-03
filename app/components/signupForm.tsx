@@ -1,7 +1,7 @@
 import { Form, Link } from "@remix-run/react";
 import { Props } from "~/types";
-import Inputs from "./Inputs";
-import Button from "./Button";
+import Inputs from "./input";
+import Button from "./button";
 
 const SignUpForm = ({ message }: Props) => {
     return (
